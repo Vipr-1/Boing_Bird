@@ -3,3 +3,4 @@ Authors:
 Damon Pashko, 
 Abdullahi Osman,
 Camila Peri
+Lalith Chintakrindi
