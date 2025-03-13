@@ -2,5 +2,5 @@
 Authors:
 Damon Pashko, 
 Abdullahi Osman,
-Camila, 
+Camila Peri, 
 Lalith Chintakrindi
