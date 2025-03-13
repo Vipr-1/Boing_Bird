@@ -2,7 +2,7 @@ package com.gameproject;
 
 import android.widget.ImageView;
 
-public class Plant {
+public class Plant extends Pipe{
     //vars
     ImageView plantGif;
     String orientation;
@@ -11,14 +11,15 @@ public class Plant {
     int plantX;
     int plantY;
 
+    public Plant(){
+
+    }
     //methods
-    boolean collidePlant(int birdX, int birdY, int birdWidth, int birdHeight){
+    public boolean collidePlant(int plantX, int plantY, int plantWidth, int plantHeight){
+        return true;
 
     }
-    void update(){
-
-    }
-    void reset(){
+    public void reset(){
 
     }
 }
