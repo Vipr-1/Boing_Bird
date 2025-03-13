@@ -12,4 +12,12 @@ public class Bird {
     boolean isDead;
     ImageView skin;
 
+    //methods
+    void update(){
+
+    }
+    void setSkin(){
+
+    }
+
 }
