@@ -5,55 +5,55 @@ public class GameLogic {
     int score;
     int coins;
 
-    start(){
+    public void start(){
 
     }
 
-    hardlevel(){
+    public void hardLevel(){
 
     }
 
-    update(){
+    public void update(){
 
     }
 
-    movePipe(){
+    public void movePipe(){
 
     }
 
-    movePlant(){
+    public void movePlant(){
 
     }
 
-    restart(){
+    public void restart(){
 
     }
 
-    quit(){
+    public void quit(){
 
     }
 
-    checkForCollisions(){
+    public boolean checkForCollisions(){
 
     }
 
-    hitFloor(){
+    public boolean hitFloor(){
 
     }
 
-    displayGameOver(){
+    public void displayGameOver(){
 
     }
 
-    bestScore(){
+    public int bestScore(){
 
     }
 
-    checkScore(){
+    public void checkScore(){
 
     }
 
-    checkCoins(){
+    public void checkCoins(){
 
     }
 }
