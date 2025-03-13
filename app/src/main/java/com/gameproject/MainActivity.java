@@ -21,4 +21,10 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
     }
+    /**
+    Initialize the game
+     */
+    protected void mainGame(){
+
+    }
 }
