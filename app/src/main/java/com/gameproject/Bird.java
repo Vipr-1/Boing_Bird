@@ -1,6 +1,7 @@
 package com.gameproject;
 
 import android.media.Image;
+import android.widget.ImageView;
 
 public class Bird {
     //vars
@@ -9,6 +10,6 @@ public class Bird {
     int birdX;
     int birdY;
     boolean isDead;
-    Image skin;
+    ImageView skin;
 
 }
