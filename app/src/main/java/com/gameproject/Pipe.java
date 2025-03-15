@@ -21,10 +21,10 @@ public class Pipe {
         int birdHitboxWidth = birdX + birdWidth;
         int birdHitboxHeight = birdY + birdHeight;
         int pipeHitboxWidth = pipeX + pipeWidth;
-        int pipHitboxHeight = pipeY + pipeHeight;
-        if (birdHitboxWidth == pipeHitboxWidth && birdHitboxHeight >= pipHitboxHeight && orientation == "top"){
+        int pipeHitboxHeight = pipeY + pipeHeight;
+        if (birdHitboxWidth == pipeHitboxWidth && birdHitboxHeight >= pipeHitboxHeight && orientation == "top"){
             return true;
-        } else if (birdHitboxWidth == pipeHitboxWidth && birdHitboxHeight <= pipHitboxHeight && orientation == "bottom") {
+        } else if (birdHitboxWidth == pipeHitboxWidth && birdHitboxHeight <= pipeHitboxHeight && orientation == "bottom") {
             return true;
         }
         else {
