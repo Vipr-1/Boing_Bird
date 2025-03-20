@@ -18,6 +18,18 @@ public class Pipe {
 
     }
     boolean collidePipe(int birdX, int birdY, int birdWidth, int birdHeight){
+        int birdHitboxWidth = birdX + birdWidth;
+        int birdHitboxHeight = birdY + birdHeight;
+        int pipeHitboxWidth = pipeX + pipeWidth;
+        int pipeHitboxHeight = pipeY + pipeHeight;
+        if (birdHitboxWidth == pipeHitboxWidth && birdHitboxHeight >= pipeHitboxHeight && orientation == "top"){
+            return true;
+        } else if (birdHitboxWidth == pipeHitboxWidth && birdHitboxHeight <= pipeHitboxHeight && orientation == "bottom") {
+            return true;
+        }
+        else {
+            return false;
+        }
 
     }
 }
