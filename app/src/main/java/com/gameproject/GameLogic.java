@@ -38,12 +38,6 @@ public class GameLogic {
     }
 
     public boolean hitFloor(){
-        if (player.birdY == 0){
-            return true;
-        }
-        else {
-            return false;
-        }
 
     }
 
