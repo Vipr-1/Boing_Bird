@@ -34,11 +34,11 @@ public class GameLogic {
     }
 
     public boolean checkForCollisions(){
-
+        return true;
     }
 
     public boolean hitFloor(){
-
+        return false;
     }
 
     public void displayGameOver(){
@@ -46,6 +46,7 @@ public class GameLogic {
     }
 
     public int bestScore(){
+        return 0;
 
     }
 

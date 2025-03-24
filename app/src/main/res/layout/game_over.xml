@@ -5,14 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ImageView
-        android:id="@+id/imageView2"
-        android:layout_width="314dp"
-        android:layout_height="201dp"
-        app:srcCompat="@drawable/GameOverPane"
-        tools:layout_editor_absoluteX="48dp"
-        tools:layout_editor_absoluteY="265dp" />
-
     <TextView
         android:id="@+id/textView2"
         android:layout_width="240dp"
