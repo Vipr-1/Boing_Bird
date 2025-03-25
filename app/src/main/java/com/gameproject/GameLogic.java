@@ -34,17 +34,11 @@ public class GameLogic {
     }
 
     public boolean checkForCollisions(){
-
+        return true;
     }
 
     public boolean hitFloor(){
-        if (player.birdY == 0){
-            return true;
-        }
-        else {
-            return false;
-        }
-
+        return false;
     }
 
     public void displayGameOver(){
@@ -52,6 +46,7 @@ public class GameLogic {
     }
 
     public int bestScore(){
+        return 0;
 
     }
 
