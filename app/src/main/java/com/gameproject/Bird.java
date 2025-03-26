@@ -9,9 +9,18 @@ public class Bird {
     int birdWidth;
     int birdX;
     int birdY;
-    boolean isDead;
+    public int velocityY;
+    public boolean isDead;
     ImageView skin;
 
+    public Bird() {
+        this.birdX = 0;
+        this.birdY = 0;
+        this.birdWidth = 0;
+        this.birdHeight = 0;
+        this.velocityY = 0;
+        this.isDead = false;
+    }
     //methods
     void update(){
 
