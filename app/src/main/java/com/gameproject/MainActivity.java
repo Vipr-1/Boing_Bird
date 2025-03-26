@@ -10,6 +10,7 @@ import androidx.core.view.WindowInsetsCompat;
 import android.widget.Button;
 import android.view.View;
 import android.content.Intent;
+import android.widget.ImageButton;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -25,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-        Button playClassicButton = findViewById(R.id.button);
+        ImageButton playClassicButton = findViewById(R.id.imagePlay);
         playClassicButton.setOnClickListener(v -> mainGame());
     }
     /**
