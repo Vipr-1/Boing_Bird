@@ -1,20 +1,33 @@
 package com.gameproject;
+
 import android.os.Bundle;
+import android.os.Handler;
+import android.view.View;
+import android.widget.ImageView;
+import androidx.appcompat.app.AppCompatActivity;
 
-public class GameLogic extends MainActivity {
+public class GameLogic extends AppCompatActivity {
 
-    int score;
-    int coins;
-    private static final int gravity = 1;
-    private static final int JUMP_FORCE = -10;
     private Bird bird;
-
-    @Override
+    private Handler handler = new Handler();
+    private final int FRAME_RATE = 30; // Refresh rate for game loop
+    private int gravity = 1;  // Gravity effect
+    private int score;
+    private int coins;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
-        bird = new Bird();
+
+        ImageView birdImage = findViewById(R.id.birdImage);
+        bird = new Bird(birdImage);
+
         startGame();
+
+        //Start game loop (runs every FRAME_RATE ms)
+        handler.postDelayed(gameLoop, FRAME_RATE);
+
+        //making the whole screen detect taps
+        findViewById(android.R.id.content).setOnClickListener(v -> bird.jump());
     }
 
     public void startGame(){
@@ -24,57 +37,47 @@ public class GameLogic extends MainActivity {
         bird.isDead = false;
     }
 
-    public void hardLevel(){
+    //Game loop- updates bird and redraws screen
+    private Runnable gameLoop = new Runnable() {
+        @Override
+        public void run() {
+            update();  //update bird position and apply gravity
+            handler.postDelayed(this, FRAME_RATE);  // Continue the loop
+        }
+    };
 
+    public void update() {
+        bird.velocityY += gravity;  //Gravity pulls down the gravity
+        bird.birdY += bird.velocityY;  //Update bird position based on velocity
+
+        //Update the birds position on the screen
+        ImageView birdImage = findViewById(R.id.birdImage);
+        birdImage.setY(bird.birdY);
     }
 
-    public void update(){
-        bird.update();
-        bird.velocityY += gravity;
-        bird.birdY += bird.velocityY;
-
-
-    }
-
-    public void movePipe(){
-
-    }
-
-    public void movePlant(){
-
-    }
 
     public void restart(){
         startGame();
     }
 
-    public void quit(){
+    public void displayGameOver() {
+    }
 
+    public boolean hitFloor() {
+        return bird.birdY >= 1500;
     }
 
     public boolean checkForCollisions(){
         return false;
     }
 
-    public boolean hitFloor(){
-        return bird.birdY <= 0;
+    public void checkScore() {
     }
 
-    public void displayGameOver(){
-
+    public void checkCoins() {
     }
 
-    public int bestScore(){
-        return 0;
-
-    }
-
-    public void checkScore(){
-
-    }
-
-    public void checkCoins(){
-
+    public int bestScore() {
+        return score;
     }
 }
-
