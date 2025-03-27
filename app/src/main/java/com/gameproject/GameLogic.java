@@ -56,6 +56,9 @@ public class GameLogic extends AppCompatActivity {
         if (hitFloor()){
             bird.isDead = true;
         }
+        if(bird.isDead){
+            displayGameOver();
+        }
     }
 
 
