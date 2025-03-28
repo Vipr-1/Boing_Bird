@@ -29,8 +29,9 @@ public class MainActivity extends AppCompatActivity {
         ImageButton playClassicButton = findViewById(R.id.imagePlay);
         playClassicButton.setOnClickListener(v -> mainGame());
 
+        // clicking the How To Play Button
         ImageButton howToPlayButton = findViewById(R.id.imageButton8);
-        howToPlayButton.setOnClickListener(v -> openHowToPlay()); // Corrected
+        howToPlayButton.setOnClickListener(v -> openHowToPlay());
 
 
     }
@@ -42,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    // Opens How to Play screen
+    // Opens the How to Play screen
     protected void openHowToPlay() {
         Intent intent = new Intent(MainActivity.this, HowToPlay.class);
         startActivity(intent);
