@@ -7,6 +7,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import android.widget.Button;
+import android.view.View;
+import android.content.Intent;
+import android.widget.ImageButton;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -20,12 +25,16 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        ImageButton playClassicButton = findViewById(R.id.imagePlay);
+        playClassicButton.setOnClickListener(v -> mainGame());
     }
     /**
     Initialize the game
      */
     protected void mainGame(){
-
+        Intent intent = new Intent(MainActivity.this, GameLogic.class);
+        startActivity(intent);
     }
 }
 /**
