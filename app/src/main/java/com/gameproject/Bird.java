@@ -27,6 +27,10 @@ public class Bird {
         birdImage.setY(birdY);
     }
 
+    public void setSkin(ImageView birdImage){
+        this.birdImage = birdImage;
+    }
+
     // bird jump
     public void jump() {
         velocityY = -20;  // Apply jump force

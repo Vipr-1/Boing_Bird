@@ -53,6 +53,12 @@ public class GameLogic extends AppCompatActivity {
         //Update the birds position on the screen
         ImageView birdImage = findViewById(R.id.birdImage);
         birdImage.setY(bird.birdY);
+        if (hitFloor()){
+            bird.isDead = true;
+        }
+        if(bird.isDead){
+            displayGameOver();
+        }
     }
 
 
