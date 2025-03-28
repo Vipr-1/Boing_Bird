@@ -28,12 +28,23 @@ public class MainActivity extends AppCompatActivity {
 
         ImageButton playClassicButton = findViewById(R.id.imagePlay);
         playClassicButton.setOnClickListener(v -> mainGame());
+
+        ImageButton howToPlayButton = findViewById(R.id.imageButton8);
+        howToPlayButton.setOnClickListener(v -> openHowToPlay()); // Corrected
+
+
     }
     /**
     Initialize the game
      */
     protected void mainGame(){
         Intent intent = new Intent(MainActivity.this, GameLogic.class);
+        startActivity(intent);
+    }
+
+    // Opens How to Play screen
+    protected void openHowToPlay() {
+        Intent intent = new Intent(MainActivity.this, HowToPlay.class);
         startActivity(intent);
     }
 }
