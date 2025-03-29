@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/boing_bird_2"
+    android:background="@drawable/bg_main_home"
     tools:context=".MainActivity">
 
 
@@ -47,10 +47,10 @@
         android:scaleType="fitXY"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/play_button" />
+        app:srcCompat="@drawable/button_play" />
 
     <ImageButton
-        android:id="@+id/imageButton7"
+        android:id="@+id/imageSkins"
         android:layout_width="215dp"
         android:layout_height="87dp"
         android:layout_marginStart="96dp"
@@ -61,10 +61,10 @@
         android:scaleType="fitXY"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/skins" />
+        app:srcCompat="@drawable/button_skins" />
 
     <ImageButton
-        android:id="@+id/imageButton8"
+        android:id="@+id/image3"
         android:layout_width="194dp"
         android:layout_height="65dp"
         android:layout_marginStart="107dp"
@@ -75,21 +75,20 @@
         android:scaleType="fitXY"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/howfinalbutton" />
+        app:srcCompat="@drawable/button_how_to_play" />
 
-
-
-    <ImageButton
-        android:id="@+id/imageButton9"
-        android:layout_width="214dp"
-        android:layout_height="87dp"
-        android:layout_marginStart="96dp"
-        android:layout_marginTop="516dp"
-        android:backgroundTint="#00FFFFFF"
+    <ImageView
+        android:id="@+id/buttonHardLevel"
+        android:layout_width="190dp"
+        android:layout_height="67dp"
+        android:layout_marginStart="107dp"
+        android:layout_marginTop="528dp"
         android:clickable="true"
+        android:cropToPadding="true"
         android:scaleType="fitXY"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/hardbutton" />
+        app:srcCompat="@drawable/button_hard_level" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

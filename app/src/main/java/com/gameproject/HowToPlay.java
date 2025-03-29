@@ -12,7 +12,7 @@ public class HowToPlay extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.how_to_play);
 
-        ImageButton backButton = findViewById(R.id.backButton);
+        ImageButton backButton = findViewById(R.id.buttonBackRed);
         backButton.setOnClickListener(v -> finish());
     }
 }

@@ -29,8 +29,11 @@ public class MainActivity extends AppCompatActivity {
         ImageButton playClassicButton = findViewById(R.id.imagePlay);
         playClassicButton.setOnClickListener(v -> mainGame());
 
+        ImageButton skinsButton = findViewById(R.id.imageSkins);
+        skinsButton.setOnClickListener(v -> skinScreen());
+
         // clicking the How To Play Button
-        ImageButton howToPlayButton = findViewById(R.id.imageButton8);
+        ImageButton howToPlayButton = findViewById(R.id.image3);
         howToPlayButton.setOnClickListener(v -> openHowToPlay());
 
 
@@ -40,6 +43,11 @@ public class MainActivity extends AppCompatActivity {
      */
     protected void mainGame(){
         Intent intent = new Intent(MainActivity.this, GameLogic.class);
+        startActivity(intent);
+    }
+
+    protected void skinScreen(){
+        Intent intent = new Intent(MainActivity.this, Skins.class);
         startActivity(intent);
     }
 

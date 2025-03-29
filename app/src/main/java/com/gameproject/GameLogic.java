@@ -34,7 +34,7 @@ public class GameLogic extends AppCompatActivity {
         bird.birdX = 600;
         bird.birdY = 300;
         bird.velocityY = 0;
-       bird.isDead = false;
+        bird.isDead = false;
     }
 
     //Game loop- updates bird and redraws screen

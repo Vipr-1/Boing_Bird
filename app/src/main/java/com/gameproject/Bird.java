@@ -21,7 +21,7 @@ public class Bird {
 
     // Update bird position
     public void update() {
-        velocityY += 1;  // Gravity effect
+        velocityY += 2;  // Gravity effect
         birdY += velocityY;
 
         birdImage.setY(birdY);
@@ -33,6 +33,6 @@ public class Bird {
 
     // bird jump
     public void jump() {
-        velocityY = -20;  // Apply jump force
+        velocityY = -25;  // Apply jump force
     }
 }
