@@ -23,8 +23,9 @@
             android:textStyle="bold" />
 
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="325dp"
+            android:layout_height="269dp"
+            android:padding="10dp"
             android:text="Tap the screen to make the bird jump
             \n\nAvoid hitting the ground, pipes, and
             \n\nthe plants that are coming
@@ -32,10 +33,9 @@
             \n\nEarn points by passing through gaps.
             \n\nTry to get the highest score!
             \n\nGood Luck"
+            android:textAlignment="center"
             android:textColor="@color/black"
             android:textSize="17.5sp"
-            android:textAlignment="center"
-            android:padding="10dp"
             android:textStyle="bold" />
 
         <ImageButton
