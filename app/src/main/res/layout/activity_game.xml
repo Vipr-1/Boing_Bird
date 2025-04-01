@@ -19,16 +19,6 @@
         app:srcCompat="@drawable/bird_default" />
 
     <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="259dp"
-        android:layout_height="344dp"
-        android:layout_marginStart="52dp"
-        android:scaleType="fitXY"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/pipe_green_south" />
-
-    <ImageView
         android:id="@+id/imageView7"
         android:layout_width="76dp"
         android:layout_height="385dp"
@@ -38,5 +28,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/pipesouth" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="92dp"
+        android:layout_height="327dp"
+        app:srcCompat="@drawable/pipe_top"
+        tools:layout_editor_absoluteX="124dp"
+        tools:layout_editor_absoluteY="-18dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
