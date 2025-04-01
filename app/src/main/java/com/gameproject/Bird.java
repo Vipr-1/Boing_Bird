@@ -3,10 +3,10 @@ package com.gameproject;
 import android.widget.ImageView;
 
 public class Bird {
-    int birdHeight;
-    int birdWidth;
-    int birdX;
-    int birdY;
+    public int birdHeight;
+    public int birdWidth;
+    public int birdX;
+    public int birdY;
     public int velocityY;
     public boolean isDead;
     private ImageView birdImage;

@@ -17,19 +17,33 @@ public class Pipe {
     void update(){
 
     }
-    boolean collidePipe(int birdX, int birdY, int birdWidth, int birdHeight){
-        int birdHitboxWidth = birdX + birdWidth;
-        int birdHitboxHeight = birdY + birdHeight;
+    boolean collidePipe(Bird player){
+        int birdHitboxWidth = player.birdX + player.birdWidth;
+        int birdHitboxHeight = player.birdY + player.birdHeight;
         int pipeHitboxWidth = pipeX + pipeWidth;
         int pipeHitboxHeight = pipeY + pipeHeight;
-        if (birdHitboxWidth == pipeHitboxWidth && birdHitboxHeight >= pipeHitboxHeight && orientation == "top"){
+        if (birdHitboxWidth == pipeHitboxWidth && birdHitboxHeight <= pipeHitboxHeight && orientation == "top"){
             return true;
-        } else if (birdHitboxWidth == pipeHitboxWidth && birdHitboxHeight <= pipeHitboxHeight && orientation == "bottom") {
+        } else if (birdHitboxWidth == pipeHitboxWidth && birdHitboxHeight >= pipeHitboxHeight && orientation == "bottom") {
             return true;
         }
         else {
             return false;
         }
 
+    }
+    boolean passedPipe(Bird player){
+        int birdHitboxWidth = player.birdX + player.birdWidth;
+        int birdHitboxHeight = player.birdY + player.birdHeight;
+        int pipeHitboxWidth = pipeX + pipeWidth;
+        int pipeHitboxHeight = pipeY + pipeHeight;
+        if (player.birdX == pipeX && birdHitboxHeight >= pipeHitboxHeight && orientation == "top"){
+            return true;
+        } else if (player.birdX == pipeX && birdHitboxHeight <= pipeHitboxHeight && orientation == "bottom") {
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 }
