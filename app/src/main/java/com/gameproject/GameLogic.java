@@ -13,8 +13,8 @@ public class GameLogic extends AppCompatActivity {
     private final int FRAME_RATE = 30; // Refresh rate for game loop
     private int gravity = 1;  // Gravity effect
 
-    private Pipe bottomPipe;
-    private Pipe topPipe;
+    //private Pipe bottomPipe;
+    //private Pipe topPipe;
     private int score;
     private int coins;
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,13 +59,14 @@ public class GameLogic extends AppCompatActivity {
         if (hitFloor()){
             bird.isDead = true;
         }
+        /*
         if (checkForCollisions()){
             bird.isDead = true;
         }
         if (checkForPass()){
             score += 1;
         }
-
+        */
         if(bird.isDead){
             displayGameOver();
         }
@@ -82,7 +83,7 @@ public class GameLogic extends AppCompatActivity {
     public boolean hitFloor() {
         return bird.birdY >= 1500;
     }
-
+/*
     public boolean checkForCollisions(){
         if (topPipe.collidePipe(bird)){
             return true;
@@ -102,7 +103,7 @@ public class GameLogic extends AppCompatActivity {
             return false;
         }
     }
-
+*/
     public void checkScore() {
     }
 
