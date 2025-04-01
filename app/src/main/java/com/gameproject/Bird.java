@@ -9,6 +9,7 @@ public class Bird {
     public int birdY;
     public int velocityY;
     public boolean isDead;
+    public final int minY = -500; //top of the screen
     private ImageView birdImage;
 
     public Bird(ImageView birdImage) {
@@ -23,7 +24,9 @@ public class Bird {
     public void update() {
         velocityY += 2;  // Gravity effect
         birdY += velocityY;
-
+        if (birdY < minY){
+            birdY = minY;
+        }
         birdImage.setY(birdY);
     }
 
