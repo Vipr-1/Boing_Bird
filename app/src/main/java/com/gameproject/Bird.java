@@ -9,7 +9,7 @@ public class Bird {
     public int birdY;
     public int velocityY;
     public boolean isDead;
-    public final int minY = -500; //top of the screen
+    public final int minY = 0; //top of the screen
     private ImageView birdImage;
 
     public Bird(ImageView birdImage) {
