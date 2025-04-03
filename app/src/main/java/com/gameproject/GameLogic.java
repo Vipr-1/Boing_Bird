@@ -1,7 +1,9 @@
 package com.gameproject;
 
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.ImageView;
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,65 +14,79 @@ public class GameLogic extends AppCompatActivity {
     private Handler handler = new Handler();
     private final int FRAME_RATE = 30; // Refresh rate for game loop
     private int gravity = 1;  // Gravity effect
-
-    private Pipe bottomPipe;
-    private Pipe topPipe;
     private int score;
     private int coins;
+    private ImageView birdImage;
+    private ImageView pipeNorthImage;
+    private ImageView pipeSouthImage;
+    private boolean gameStarted = false;
+
+    // New fields for pipes and screen width
+    private Pipe pipeNorthObj;
+    private Pipe pipeSouthObj;
+    private int screenWidth;
+    private final int pipe_speed = 10;
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
-
-        ImageView birdImage = findViewById(R.id.birdImage);
+        pipeNorthImage = findViewById(R.id.pipeNorth);
+        pipeSouthImage = findViewById(R.id.pipeSouth);
+        birdImage = findViewById(R.id.birdImage);
         bird = new Bird(birdImage);
 
-        startGame();
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        screenWidth = displayMetrics.widthPixels;
 
-        //Start game loop (runs every FRAME_RATE ms)
-        handler.postDelayed(gameLoop, FRAME_RATE);
+        pipeNorthObj = new Pipe(pipeNorthImage, pipe_speed);
+        pipeSouthObj = new Pipe(pipeSouthImage, pipe_speed);
 
-        //making the whole screen detect taps
-        findViewById(android.R.id.content).setOnClickListener(v -> bird.jump());
+        findViewById(android.R.id.content).setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                if (!gameStarted) {
+                    gameStarted = true;
+                    startGame();
+                    handler.postDelayed(gameLoop, FRAME_RATE);
+                } else if (!bird.isDead) {
+                    bird.jump();
+                }
+            }
+        });
     }
 
     public void startGame(){
-        bird.birdX = 600;
-        bird.birdY = 300;
+        bird.birdX = 539;
+        bird.birdY = 1169;
         bird.velocityY = 0;
         bird.isDead = false;
     }
 
-    //Game loop- updates bird and redraws screen
     private Runnable gameLoop = new Runnable() {
         @Override
         public void run() {
-            update();  //update bird position and apply gravity
-            handler.postDelayed(this, FRAME_RATE);  // Continue the loop
+            if (!bird.isDead) {
+                update();
+                handler.postDelayed(this, FRAME_RATE);
+            }
         }
     };
 
     public void update() {
-        bird.velocityY += gravity;  //Gravity pulls down the gravity
-        bird.birdY += bird.velocityY;  //Update bird position based on velocity
-
-        //Update the birds position on the screen
-        ImageView birdImage = findViewById(R.id.birdImage);
+        bird.velocityY += gravity;
+        bird.birdY += bird.velocityY;
         birdImage.setY(bird.birdY);
-        if (hitFloor()){
+        if (hitFloor() || checkForCollisions()) {
             bird.isDead = true;
+            bird.velocityY = 0;
         }
-        if (checkForCollisions()){
-            bird.isDead = true;
-        }
-        if (checkForPass()){
-            score += 1;
-        }
-
         if(bird.isDead){
             displayGameOver();
         }
-    }
 
+        pipeNorthObj.move(screenWidth);
+        pipeSouthObj.move(screenWidth);
+    }
 
     public void restart(){
         startGame();
@@ -80,27 +96,20 @@ public class GameLogic extends AppCompatActivity {
     }
 
     public boolean hitFloor() {
-        return bird.birdY >= 1500;
+        return bird.birdY >= 2338.875;
     }
 
-    public boolean checkForCollisions(){
-        if (topPipe.collidePipe(bird)){
-            return true;
-        } else if (bottomPipe.collidePipe(bird)){
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
+    public boolean checkForCollisions() {
+        Rect birdRect = new Rect();
+        birdImage.getHitRect(birdRect);
 
-    public boolean checkForPass(){
-        if (topPipe.passedPipe(bird) && bottomPipe.passedPipe(bird)) {
-            return true;
-        }
-        else{
-            return false;
-        }
+        Rect pipeNorthRect = new Rect();
+        pipeNorthImage.getHitRect(pipeNorthRect);
+
+        Rect pipeSouthRect = new Rect();
+        pipeSouthImage.getHitRect(pipeSouthRect);
+
+        return Rect.intersects(birdRect, pipeNorthRect) || Rect.intersects(birdRect, pipeSouthRect);
     }
 
     public void checkScore() {

@@ -14,7 +14,7 @@ public class Bird {
 
     public Bird(ImageView birdImage) {
         this.birdX = 100;
-        this.birdY = 300;
+        this.birdY = 130;
         this.velocityY = 0;
         this.isDead = false;
         this.birdImage = birdImage;

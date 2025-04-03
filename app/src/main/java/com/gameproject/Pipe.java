@@ -3,47 +3,29 @@ package com.gameproject;
 import android.widget.ImageView;
 
 public class Pipe {
-    //vars
-    String orientation;
-    ImageView texture;
-    int speed;
-    int pipeHeight;
-    int pipeWidth;
-    int pipeX;
-    int pipeY;
-    boolean hasPlant;
 
-    //methods
-    void update(){
+    public ImageView texture;
+    public int speed;
+    public int pipeHeight;
+    public int pipeWidth;
+    public int pipeX;
+    public int pipeY;
+    public boolean hasPlant;
 
+    public Pipe(ImageView texture, int speed) {
+        this.texture = texture;
+        this.speed = speed;
+        this.pipeX = (int)texture.getX();
+        this.pipeY = (int)texture.getY();
+        this.pipeWidth = texture.getWidth();
+        this.pipeHeight = texture.getHeight();
     }
-    boolean collidePipe(Bird player){
-        int birdHitboxWidth = player.birdX + player.birdWidth;
-        int birdHitboxHeight = player.birdY + player.birdHeight;
-        int pipeHitboxWidth = pipeX + pipeWidth;
-        int pipeHitboxHeight = pipeY + pipeHeight;
-        if (birdHitboxWidth == pipeHitboxWidth && birdHitboxHeight <= pipeHitboxHeight && orientation == "top"){
-            return true;
-        } else if (birdHitboxWidth == pipeHitboxWidth && birdHitboxHeight >= pipeHitboxHeight && orientation == "bottom") {
-            return true;
-        }
-        else {
-            return false;
-        }
 
-    }
-    boolean passedPipe(Bird player){
-        int birdHitboxWidth = player.birdX + player.birdWidth;
-        int birdHitboxHeight = player.birdY + player.birdHeight;
-        int pipeHitboxWidth = pipeX + pipeWidth;
-        int pipeHitboxHeight = pipeY + pipeHeight;
-        if (player.birdX == pipeX && birdHitboxHeight >= pipeHitboxHeight && orientation == "top"){
-            return true;
-        } else if (player.birdX == pipeX && birdHitboxHeight <= pipeHitboxHeight && orientation == "bottom") {
-            return true;
+    public void move(int screenWidth) {
+        pipeX -= speed;
+        if (pipeX < -pipeWidth) {
+            pipeX = screenWidth;
         }
-        else {
-            return false;
-        }
+        texture.setX(pipeX);
     }
 }
