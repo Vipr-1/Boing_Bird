@@ -81,8 +81,12 @@ public class GameLogic extends AppCompatActivity {
             bird.velocityY = 0;
         }
         if(bird.isDead){
-            displayGameOver();
+            restart();
         }
+        //test changing pipe height
+        pipeNorthObj.setPipeY(200);
+
+        pipeSouthObj.setPipeY(600);
 
         pipeNorthObj.move(screenWidth);
         pipeSouthObj.move(screenWidth);

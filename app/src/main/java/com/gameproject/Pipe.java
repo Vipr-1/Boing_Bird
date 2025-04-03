@@ -1,6 +1,8 @@
 package com.gameproject;
 
+import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 public class Pipe {
 
@@ -12,6 +14,8 @@ public class Pipe {
     public int pipeY;
     public boolean hasPlant;
 
+    public ViewGroup.LayoutParams params; //Used by the set height method to change xml values
+
     public Pipe(ImageView texture, int speed) {
         this.texture = texture;
         this.speed = speed;
@@ -19,6 +23,7 @@ public class Pipe {
         this.pipeY = (int)texture.getY();
         this.pipeWidth = texture.getWidth();
         this.pipeHeight = texture.getHeight();
+        this.params = texture.getLayoutParams();
     }
 
     public void move(int screenWidth) {
@@ -27,5 +32,15 @@ public class Pipe {
             pipeX = screenWidth;
         }
         texture.setX(pipeX);
+    }
+
+
+    /**
+     * changes The xml of the pipe to change its height
+     * @param height the new xml height value
+     */
+    public void setPipeY(int height){
+        params.height = height;
+        texture.setLayoutParams(params);
     }
 }
