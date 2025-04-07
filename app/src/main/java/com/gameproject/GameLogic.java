@@ -19,11 +19,16 @@ public class GameLogic extends AppCompatActivity {
     private ImageView birdImage;
     private ImageView pipeNorthImage;
     private ImageView pipeSouthImage;
+
+    private ImageView pipeNorthTwo;
+    private ImageView pipeSouthTwo;
     private boolean gameStarted = false;
 
     // New fields for pipes and screen width
     private Pipe pipeNorthObj;
     private Pipe pipeSouthObj;
+    private Pipe pipeSouthObj2;
+    private Pipe pipeNorthObj2;
     private int screenWidth;
     private final int pipe_speed = 10;
 
@@ -32,6 +37,10 @@ public class GameLogic extends AppCompatActivity {
         setContentView(R.layout.activity_game);
         pipeNorthImage = findViewById(R.id.pipeNorth);
         pipeSouthImage = findViewById(R.id.pipeSouth);
+
+        pipeNorthTwo = findViewById(R.id.pipeNorth2);
+        pipeSouthTwo = findViewById(R.id.pipeSouth2);
+
         birdImage = findViewById(R.id.birdImage);
         bird = new Bird(birdImage);
 
@@ -41,6 +50,13 @@ public class GameLogic extends AppCompatActivity {
 
         pipeNorthObj = new Pipe(pipeNorthImage, pipe_speed);
         pipeSouthObj = new Pipe(pipeSouthImage, pipe_speed);
+        pipeSouthObj2 = new Pipe(pipeSouthTwo, pipe_speed);
+        pipeNorthObj2 = new Pipe(pipeNorthTwo, pipe_speed);
+        pipeSouthTwo.setVisibility(View.INVISIBLE);
+        pipeNorthTwo.setVisibility(View.INVISIBLE);
+
+
+
 
         findViewById(android.R.id.content).setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -76,21 +92,30 @@ public class GameLogic extends AppCompatActivity {
         bird.velocityY += gravity;
         bird.birdY += bird.velocityY;
         birdImage.setY(bird.birdY);
+
         if (hitFloor() || checkForCollisions()) {
             bird.isDead = true;
             bird.velocityY = 0;
         }
-        if(bird.isDead){
-            restart();
-        }
-        //test changing pipe height
-        pipeNorthObj.setPipeY(200);
 
-        pipeSouthObj.setPipeY(600);
+        if (bird.isDead) {
+            displayGameOver();
+        }
 
         pipeNorthObj.move(screenWidth);
         pipeSouthObj.move(screenWidth);
+
+        if (pipeSouthObj.getPipeX() <= screenWidth / 2) {
+            pipeSouthTwo.setVisibility(View.VISIBLE);
+            pipeNorthTwo.setVisibility(View.VISIBLE);
+        }
+
+        if (pipeSouthTwo.getVisibility() == View.VISIBLE) {
+            pipeNorthObj2.move(screenWidth);
+            pipeSouthObj2.move(screenWidth);
+        }
     }
+
 
     public void restart(){
         startGame();

@@ -43,4 +43,17 @@ public class Pipe {
         params.height = height;
         texture.setLayoutParams(params);
     }
+
+    public int getPipeX(){
+        return pipeX;
+    }
+
+    public int getPipeWidth(){
+        return pipeWidth;
+    }
+
+    public void setPipeX(int x){
+        this.pipeX = x;
+    }
+
 }
