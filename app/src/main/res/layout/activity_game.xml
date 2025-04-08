@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/game_layout"
@@ -10,56 +9,92 @@
     tools:context=".GameLogic">
 
     <ImageView
-        android:id="@+id/pipeNorth"
-        android:layout_width="80dp"
-        android:layout_height="350dp"
-        android:layout_marginStart="4dp"
-        android:layout_marginTop="4dp"
+        android:id="@+id/RedNorth2"
+        android:layout_width="152dp"
+        android:layout_height="442dp"
+        android:layout_marginStart="144dp"
         android:rotationX="180"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/pipesouth" />
+        app:srcCompat="@drawable/pipe_red_south"
+        tools:layout_editor_absoluteY="293dp" />
+
+    <ImageView
+        android:id="@+id/RedNorth"
+        android:layout_width="152dp"
+        android:layout_height="442dp"
+        android:layout_marginStart="168dp"
+        android:rotationX="180"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/pipe_red_south"
+        tools:layout_editor_absoluteY="7dp" />
+
+    <ImageView
+        android:id="@+id/RedSouth2"
+        android:layout_width="152dp"
+        android:layout_height="442dp"
+        android:layout_marginStart="144dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/pipe_red_south"
+        tools:layout_editor_absoluteY="293dp" />
+
+    <ImageView
+        android:id="@+id/RedSouth"
+        android:layout_width="152dp"
+        android:layout_height="442dp"
+        android:layout_marginStart="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/pipe_red_south"
+        tools:layout_editor_absoluteY="326dp" />
+
+    <ImageView
+        android:id="@+id/pipeNorth"
+        android:layout_width="115dp"
+        android:layout_height="440dp"
+        android:layout_marginStart="280dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/pipe_top"
+        tools:layout_editor_absoluteY="-218dp" />
 
     <ImageView
         android:id="@+id/pipeNorth2"
-        android:layout_width="80dp"
-        android:layout_height="350dp"
-        android:layout_marginStart="4dp"
-        android:layout_marginTop="4dp"
-        android:rotationX="180"
+        android:layout_width="115dp"
+        android:layout_height="440dp"
+        android:layout_marginStart="240dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/pipesouth" />
+        app:srcCompat="@drawable/pipe_top"
+        tools:layout_editor_absoluteY="123dp" />
 
     <ImageView
         android:id="@+id/pipeSouth"
-        android:layout_width="80dp"
-        android:layout_height="350dp"
-        android:layout_marginStart="4dp"
-        android:layout_marginBottom="4dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_width="115dp"
+        android:layout_height="440dp"
+        android:layout_marginStart="132dp"
+        android:rotationX="180"
         app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/pipesouth" />
+        app:srcCompat="@drawable/pipe_top"
+        tools:layout_editor_absoluteY="308dp" />
 
     <ImageView
         android:id="@+id/pipeSouth2"
-        android:layout_width="80dp"
-        android:layout_height="350dp"
-        android:layout_marginStart="4dp"
-        android:layout_marginBottom="4dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_width="115dp"
+        android:layout_height="440dp"
+        android:layout_marginStart="280dp"
+        android:rotationX="180"
         app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/pipesouth" />
+        app:srcCompat="@drawable/pipe_top"
+        tools:layout_editor_absoluteY="293dp" />
 
     <ImageView
         android:id="@+id/birdImage"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        app:srcCompat="@drawable/bird_default"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="84dp"
+        android:layout_marginBottom="292dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginStart="100dp"
-        android:layout_marginBottom="100dp"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/bird_default" />
+
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

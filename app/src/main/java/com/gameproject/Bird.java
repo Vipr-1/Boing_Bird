@@ -36,6 +36,6 @@ public class Bird {
 
     // bird jump
     public void jump() {
-        velocityY = -25;  // Apply jump force
+        velocityY = -20;  // Apply jump force
     }
 }

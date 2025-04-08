@@ -14,7 +14,6 @@ public class Pipe {
     public int pipeY;
     public boolean hasPlant;
 
-    public ViewGroup.LayoutParams params; //Used by the set height method to change xml values
 
     public Pipe(ImageView texture, int speed) {
         this.texture = texture;
@@ -22,30 +21,31 @@ public class Pipe {
         this.pipeX = (int)texture.getX();
         this.pipeY = (int)texture.getY();
         this.pipeWidth = texture.getWidth();
-        this.pipeHeight = texture.getHeight();
-        this.params = texture.getLayoutParams();
-    }
+        this.pipeHeight = texture.getHeight();}
 
     public void move(int screenWidth) {
         pipeX -= speed;
-        if (pipeX < -pipeWidth) {
+        if (pipeX <= 0) {
             pipeX = screenWidth;
         }
         texture.setX(pipeX);
     }
 
-
     /**
-     * changes The xml of the pipe to change its height
-     * @param height the new xml height value
+     * Changes the xml of the pipe to change its height.
+     * @param y the new xml height value
      */
-    public void setPipeY(int height){
-        params.height = height;
-        texture.setLayoutParams(params);
+    public void setPipeY(int y) {
+        this.pipeY = y;
+        texture.setY(y);
     }
 
     public int getPipeX(){
         return pipeX;
+    }
+
+    public int getPipeY(){
+        return pipeY;
     }
 
     public int getPipeWidth(){
@@ -56,4 +56,7 @@ public class Pipe {
         this.pipeX = x;
     }
 
+    public void setSpeed(int newSpeed) {
+        this.speed = newSpeed;
+    }
 }
