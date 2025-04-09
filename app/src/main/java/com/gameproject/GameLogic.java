@@ -1,6 +1,10 @@
 package com.gameproject;
 
 import android.graphics.Rect;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.DisplayMetrics;
@@ -8,6 +12,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import androidx.appcompat.app.AppCompatActivity;
+
+import java.io.IOException;
 import java.util.Random;
 
 public class GameLogic extends AppCompatActivity {
@@ -34,6 +40,9 @@ public class GameLogic extends AppCompatActivity {
     private ImageView RedPipeSouth;
     private ImageView RedPipeSouth2;
     private int screenWidth;
+
+    private MediaPlayer jumpSFX; //Object that stores the boing and can be played back
+    private MediaPlayer deathSFX; //Same as jumpSFX but for death
 
     private final int base_pipe_speed = 10;
     private int currentPipeSpeed;
@@ -62,6 +71,9 @@ public class GameLogic extends AppCompatActivity {
 
         birdImage = findViewById(R.id.birdImage);
         bird = new Bird(birdImage);
+
+        jumpSFX = MediaPlayer.create(getApplicationContext(), R.raw.jumpfx); //build the jump sound
+        deathSFX = MediaPlayer.create(getApplicationContext(), R.raw.death); //death sound
 
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
@@ -95,6 +107,8 @@ public class GameLogic extends AppCompatActivity {
                     handler.postDelayed(gameLoop, FRAME_RATE);
                 } else if (!bird.isDead) {
                     bird.jump();
+                    jumpSFX.start();
+
                 }
             }
         });
@@ -142,6 +156,7 @@ public class GameLogic extends AppCompatActivity {
         }
 
         if (bird.isDead) {
+            deathSFX.start();
             GameOver();
         }
 
@@ -261,7 +276,7 @@ public class GameLogic extends AppCompatActivity {
     public void checkCoins() {
     }
 
-    public int bestScore() {
+        public int bestScore() {
         return score;
     }
 }

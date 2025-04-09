@@ -12,8 +12,16 @@ import android.view.View;
 import android.content.Intent;
 import android.widget.ImageButton;
 
+import android.media.MediaPlayer;
+import android.widget.ToggleButton;
+
+
 
 public class MainActivity extends AppCompatActivity {
+
+    //Music player and toggle
+    MediaPlayer mediaPlayer;
+    ToggleButton muteToggle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +44,19 @@ public class MainActivity extends AppCompatActivity {
         ImageButton howToPlayButton = findViewById(R.id.image3);
         howToPlayButton.setOnClickListener(v -> openHowToPlay());
 
+        //music toggle button setup
+        mediaPlayer = MediaPlayer.create(this, R.raw.background_music);
+        mediaPlayer.setLooping(true);
+        mediaPlayer.start();
+
+        muteToggle = findViewById(R.id.Mute);
+        muteToggle.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                mediaPlayer.pause();
+            } else {
+                mediaPlayer.start();
+            }
+        });
 
     }
     /**
@@ -56,4 +77,15 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(MainActivity.this, HowToPlay.class);
         startActivity(intent);
     }
+
+    //Stop the music properly when leaving the activity
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mediaPlayer != null) {
+            mediaPlayer.release();
+            mediaPlayer = null;
+        }
+    }
+
 }
