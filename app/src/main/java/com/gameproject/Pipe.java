@@ -14,14 +14,14 @@ public class Pipe {
     public int pipeY;
     public boolean hasPlant;
 
-
     public Pipe(ImageView texture, int speed) {
         this.texture = texture;
         this.speed = speed;
-        this.pipeX = (int)texture.getX();
-        this.pipeY = (int)texture.getY();
+        this.pipeX = (int) texture.getX();
+        this.pipeY = (int) texture.getY();
         this.pipeWidth = texture.getWidth();
-        this.pipeHeight = texture.getHeight();}
+        this.pipeHeight = texture.getHeight();
+    }
 
     public void move(int screenWidth) {
         pipeX -= speed;
@@ -58,5 +58,12 @@ public class Pipe {
 
     public void setSpeed(int newSpeed) {
         this.speed = newSpeed;
+    }
+
+    // Updated method: update the texture reference and dimensions.
+    public void setImageView(ImageView newImageView) {
+        this.texture = newImageView;
+        newImageView.setX(pipeX);
+        newImageView.setY(pipeY);
     }
 }

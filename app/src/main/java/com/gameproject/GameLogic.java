@@ -7,6 +7,8 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
+
 import androidx.appcompat.app.AppCompatActivity;
 import java.util.Random;
 
@@ -19,20 +21,20 @@ public class GameLogic extends AppCompatActivity {
     private int score;
     private int coins;
     private ImageView birdImage;
+
+    // Green pipe image views
     private ImageView pipeNorthImage;
     private ImageView pipeSouthImage;
-
     private ImageView pipeNorthTwo;
     private ImageView pipeSouthTwo;
-    private boolean gameStarted = false;
-    private Pipe pipeNorthObj;
-    private Pipe pipeSouthObj;
-    private Pipe pipeSouthObj2;
-    private Pipe pipeNorthObj2;
+
+    // Red pipe image views
     private ImageView RedPipeNorth;
     private ImageView RedPipeNorth2;
     private ImageView RedPipeSouth;
     private ImageView RedPipeSouth2;
+
+    private boolean gameStarted = false;
     private int screenWidth;
 
     private final int base_pipe_speed = 10;
@@ -42,13 +44,24 @@ public class GameLogic extends AppCompatActivity {
     private boolean scoredFirstPipePair = false;
     private boolean scoredSecondPipePair = false;
 
+    // Flag for switching pipes
+    private boolean pipesSwitched = false;
+
     private final int pipe_speed = base_pipe_speed;
     private Random random = new Random();
+
+    private Pipe pipeNorthObj;
+    private Pipe pipeSouthObj;
+    private Pipe pipeNorthObj2;
+    private Pipe pipeSouthObj2;
+    private TextView scoreTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
+
+        scoreTextView = findViewById(R.id.textView);
 
         pipeNorthImage = findViewById(R.id.pipeNorth);
         pipeSouthImage = findViewById(R.id.pipeSouth);
@@ -69,8 +82,8 @@ public class GameLogic extends AppCompatActivity {
 
         pipeNorthObj = new Pipe(pipeNorthImage, pipe_speed);
         pipeSouthObj = new Pipe(pipeSouthImage, pipe_speed);
-        pipeSouthObj2 = new Pipe(pipeSouthTwo, pipe_speed);
         pipeNorthObj2 = new Pipe(pipeNorthTwo, pipe_speed);
+        pipeSouthObj2 = new Pipe(pipeSouthTwo, pipe_speed);
 
         pipeSouthImage.setVisibility(View.INVISIBLE);
         pipeNorthImage.setVisibility(View.INVISIBLE);
@@ -100,18 +113,30 @@ public class GameLogic extends AppCompatActivity {
         });
     }
 
-    public void startGame(){
+    public void startGame() {
         bird.birdX = 539;
         bird.birdY = 1169;
         bird.velocityY = 0;
         bird.isDead = false;
 
-        // Reset
         score = 0;
         currentPipeSpeed = base_pipe_speed;
         nextScoreThreshold = 10;
         scoredFirstPipePair = false;
         scoredSecondPipePair = false;
+        pipesSwitched = false;
+
+        pipeSouthImage.setVisibility(View.INVISIBLE);
+        pipeNorthImage.setVisibility(View.INVISIBLE);
+        pipeSouthTwo.setVisibility(View.INVISIBLE);
+        pipeNorthTwo.setVisibility(View.INVISIBLE);
+        RedPipeNorth.setVisibility(View.INVISIBLE);
+        RedPipeNorth2.setVisibility(View.INVISIBLE);
+        RedPipeSouth.setVisibility(View.INVISIBLE);
+        RedPipeSouth2.setVisibility(View.INVISIBLE);
+
+        randomizePipePair(pipeNorthObj, pipeSouthObj);
+        randomizePipePair(pipeNorthObj2, pipeSouthObj2);
     }
 
     private Runnable gameLoop = new Runnable() {
@@ -131,7 +156,6 @@ public class GameLogic extends AppCompatActivity {
     }
 
     public void update() {
-        // Update bird movement
         bird.velocityY += gravity;
         bird.birdY += bird.velocityY;
         birdImage.setY(bird.birdY);
@@ -139,16 +163,45 @@ public class GameLogic extends AppCompatActivity {
         if (hitFloor() && checkForCollisions()) {
             bird.isDead = true;
             bird.velocityY = 0;
-        }
-
-        if (bird.isDead) {
             GameOver();
+            return;
         }
 
-        if (!bird.isDead) {
-            pipeSouthImage.setVisibility(View.VISIBLE);
-            pipeNorthImage.setVisibility(View.VISIBLE);
-        }
+        updatePipes();
+        checkScoreAndUpdate();
+    }
+
+    private void switchToRedPipes() {
+        // Fetch red pipe ImageViews from the layout
+        ImageView newPipeNorth = findViewById(R.id.RedNorth);
+        ImageView newPipeSouth = findViewById(R.id.RedSouth);
+        ImageView newPipeNorthTwo = findViewById(R.id.RedNorth2);
+        ImageView newPipeSouthTwo = findViewById(R.id.RedSouth2);
+
+        pipeSouthImage.setVisibility(View.INVISIBLE);
+        pipeNorthImage.setVisibility(View.INVISIBLE);
+        pipeSouthTwo.setVisibility(View.INVISIBLE);
+        pipeNorthTwo.setVisibility(View.INVISIBLE);
+
+        pipeNorthImage = newPipeNorth;
+        pipeSouthImage = newPipeSouth;
+        pipeNorthTwo = newPipeNorthTwo;
+        pipeSouthTwo = newPipeSouthTwo;
+
+        pipeNorthObj.setImageView(newPipeNorth);
+        pipeSouthObj.setImageView(newPipeSouth);
+        pipeNorthObj2.setImageView(newPipeNorthTwo);
+        pipeSouthObj2.setImageView(newPipeSouthTwo);
+
+        pipeSouthTwo.setVisibility(View.VISIBLE);
+        pipeNorthTwo.setVisibility(View.VISIBLE);
+
+    }
+
+    private void updatePipes() {
+        pipeSouthImage.setVisibility(View.VISIBLE);
+        pipeNorthImage.setVisibility(View.VISIBLE);
+
         pipeNorthObj.move(screenWidth);
         pipeSouthObj.move(screenWidth);
 
@@ -163,51 +216,41 @@ public class GameLogic extends AppCompatActivity {
             pipeSouthObj2.move(screenWidth);
         }
 
-        if (pipeSouthObj.getPipeX() == screenWidth) {
+        if (pipeSouthObj.getPipeX() >= screenWidth) {
             randomizePipePair(pipeNorthObj, pipeSouthObj);
             scoredFirstPipePair = false;
         }
-
-        if (pipeSouthTwo.getVisibility() == View.VISIBLE && pipeSouthObj2.getPipeX() == screenWidth) {
+        if (pipeSouthTwo.getVisibility() == View.VISIBLE && pipeSouthObj2.getPipeX() >= screenWidth) {
             randomizePipePair(pipeNorthObj2, pipeSouthObj2);
             scoredSecondPipePair = false;
         }
-
-        checkScore();
     }
-
-    public void checkScore() {
-        if (score == 10){
-            pipeNorthObj = new Pipe(RedPipeNorth, pipe_speed);
-            pipeSouthObj = new Pipe(RedPipeSouth, pipe_speed);
-            pipeSouthObj2 = new Pipe(RedPipeSouth2, pipe_speed);
-            pipeNorthObj2 = new Pipe(RedPipeNorth2, pipe_speed);
-            pipeSouthImage.setVisibility(View.INVISIBLE);
-            pipeNorthImage.setVisibility(View.INVISIBLE);
-            pipeSouthTwo.setVisibility(View.INVISIBLE);
-            pipeNorthTwo.setVisibility(View.INVISIBLE);
-            RedPipeNorth.setVisibility(View.VISIBLE);
-            RedPipeNorth2.setVisibility(View.VISIBLE);
-            RedPipeSouth.setVisibility(View.VISIBLE);
-            RedPipeSouth2.setVisibility(View.VISIBLE);
-        }
-
+    private void updateScoreDisplay() {
+        scoreTextView.setText(String.valueOf(score));
+    }
+    private void checkScoreAndUpdate() {
         if (pipeNorthTwo.getVisibility() == View.VISIBLE &&
                 pipeNorthObj.getPipeX() + pipeNorthImage.getWidth() < bird.birdX && !scoredFirstPipePair) {
             score++;
             scoredFirstPipePair = true;
-            Log.d("Score", "Score increased: " + score);
             updatePipeSpeed();
+            updateScoreDisplay();
         }
         if (pipeNorthTwo.getVisibility() == View.VISIBLE &&
                 pipeNorthObj2.getPipeX() + pipeNorthTwo.getWidth() < bird.birdX && !scoredSecondPipePair) {
             score++;
             scoredSecondPipePair = true;
-            Log.d("Score", "Score increased: " + score);
             updatePipeSpeed();
+            updateScoreDisplay();
+        }
+        if (score >= 10 && !pipesSwitched) {
+            switchToRedPipes();
+            pipesSwitched = true;
         }
     }
 
+
+    // Increase pipe speed at set thresholds
     private void updatePipeSpeed() {
         if (score >= nextScoreThreshold) {
             currentPipeSpeed++;
@@ -216,11 +259,10 @@ public class GameLogic extends AppCompatActivity {
             pipeSouthObj.setSpeed(currentPipeSpeed);
             pipeNorthObj2.setSpeed(currentPipeSpeed);
             pipeSouthObj2.setSpeed(currentPipeSpeed);
-            Log.d("Speed", "Pipe speed increased to " + currentPipeSpeed);
         }
     }
 
-    public void restart(){
+    public void restart() {
         startGame();
     }
 
@@ -229,6 +271,10 @@ public class GameLogic extends AppCompatActivity {
         pipeNorthImage.setVisibility(View.INVISIBLE);
         pipeSouthTwo.setVisibility(View.INVISIBLE);
         pipeNorthTwo.setVisibility(View.INVISIBLE);
+        RedPipeNorth.setVisibility(View.INVISIBLE);
+        RedPipeNorth2.setVisibility(View.INVISIBLE);
+        RedPipeSouth.setVisibility(View.INVISIBLE);
+        RedPipeSouth2.setVisibility(View.INVISIBLE);
         birdImage.setVisibility(View.INVISIBLE);
     }
 
@@ -242,16 +288,12 @@ public class GameLogic extends AppCompatActivity {
 
         Rect pipeNorthRect = new Rect();
         pipeNorthImage.getHitRect(pipeNorthRect);
-
         Rect pipeSouthRect = new Rect();
         pipeSouthImage.getHitRect(pipeSouthRect);
-
-        Rect pipeSouthRect2 = new Rect();
-        pipeSouthTwo.getHitRect(pipeSouthRect2);
-
         Rect pipeNorthRect2 = new Rect();
         pipeNorthTwo.getHitRect(pipeNorthRect2);
-
+        Rect pipeSouthRect2 = new Rect();
+        pipeSouthTwo.getHitRect(pipeSouthRect2);
         return Rect.intersects(birdRect, pipeNorthRect) ||
                 Rect.intersects(birdRect, pipeSouthRect) ||
                 Rect.intersects(birdRect, pipeNorthRect2) ||
