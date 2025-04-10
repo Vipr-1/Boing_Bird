@@ -10,6 +10,11 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import android.widget.FrameLayout;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import android.content.SharedPreferences;
+
+
 import androidx.appcompat.app.AppCompatActivity;
 import java.util.Random;
 
@@ -61,10 +66,27 @@ public class GameLogic extends AppCompatActivity {
     private Pipe pipeSouthObj2;
     private TextView scoreTextView;
 
+    ConstraintLayout gameLayout;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
+
+        gameLayout = findViewById(R.id.game_layout);
+
+        // Read dark mode state from SharedPreferences
+        SharedPreferences preferences = getSharedPreferences("settings", MODE_PRIVATE);
+        boolean isDark = preferences.getBoolean("dark_mode", false);
+
+        // Set background based on mode (In-game background)
+        if (isDark) {
+            gameLayout.setBackgroundResource(R.drawable.bg_night);
+        } else {
+            gameLayout.setBackgroundResource(R.drawable.bg_day); // or your light game background
+        }
+
 
         scoreTextView = findViewById(R.id.textView);
 
@@ -120,6 +142,8 @@ public class GameLogic extends AppCompatActivity {
                 }
             }
         });
+
+
     }
 
     public void startGame() {
