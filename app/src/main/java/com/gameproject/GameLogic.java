@@ -66,7 +66,7 @@ public class GameLogic extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
 
-        scoreTextView = findViewById(R.id.textView);
+        scoreTextView = findViewById(R.id.textView2);
 
         pipeNorthImage = findViewById(R.id.pipeNorth);
         pipeSouthImage = findViewById(R.id.pipeSouth);
