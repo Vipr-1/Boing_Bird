@@ -1,6 +1,7 @@
 package com.gameproject;
 
 import android.graphics.Rect;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.DisplayMetrics;
@@ -40,6 +41,10 @@ public class GameLogic extends AppCompatActivity {
     private final int base_pipe_speed = 10;
     private int currentPipeSpeed;
     private int nextScoreThreshold = 10;
+
+    // Sound effect objects
+    private MediaPlayer jumpSFX;
+    private MediaPlayer deathSFX;
 
     private boolean scoredFirstPipePair = false;
     private boolean scoredSecondPipePair = false;
@@ -100,6 +105,9 @@ public class GameLogic extends AppCompatActivity {
         scoredSecondPipePair = false;
         score = 0;
 
+        jumpSFX = MediaPlayer.create(getApplicationContext(), R.raw.jumpfx);
+        deathSFX = MediaPlayer.create(getApplicationContext(), R.raw.death);
+
         findViewById(android.R.id.content).setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (!gameStarted) {
@@ -108,6 +116,7 @@ public class GameLogic extends AppCompatActivity {
                     handler.postDelayed(gameLoop, FRAME_RATE);
                 } else if (!bird.isDead) {
                     bird.jump();
+                    jumpSFX.start(); //play boing when jumping
                 }
             }
         });
@@ -163,6 +172,7 @@ public class GameLogic extends AppCompatActivity {
         if (hitFloor() && checkForCollisions()) {
             bird.isDead = true;
             bird.velocityY = 0;
+            deathSFX.start(); //play death sound when dead
             GameOver();
             return;
         }
