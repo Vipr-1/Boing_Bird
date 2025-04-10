@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
         howToPlayButton.setOnClickListener(v -> openHowToPlay());
 
         //music toggle button setup
-        mediaPlayer = MediaPlayer.create(this, R.raw.background_music);
+        mediaPlayer = MediaPlayer.create(this, R.raw.music);
         mediaPlayer.setLooping(true);
         mediaPlayer.start();
 
