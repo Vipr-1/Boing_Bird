@@ -26,9 +26,9 @@ public class HowToPlay extends AppCompatActivity {
         boolean isDark = preferences.getBoolean("dark_mode", false);
 
         if (isDark) {
-            howToPlayLayout.setBackgroundResource(R.drawable.bg_night); // dark mode bg
+            howToPlayLayout.setBackgroundResource(R.drawable.bg_main_dark); // dark mode bg
         } else {
-            howToPlayLayout.setBackgroundResource(R.drawable.bg_day); // light mode bg
+            howToPlayLayout.setBackgroundResource(R.drawable.bg_main_light); // light mode bg
         }
 
     }

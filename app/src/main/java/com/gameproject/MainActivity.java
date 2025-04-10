@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Restore saved mode
         boolean isDark = preferences.getBoolean("dark_mode", false);
-        mainLayout.setBackgroundResource(isDark ? R.drawable.bg_night : R.drawable.bg_main_home);
+        mainLayout.setBackgroundResource(isDark ? R.drawable.bg_main_dark : R.drawable.bg_main_light);
         darkModeSwitch.setChecked(isDark);
 
         // Toggle background on switch
@@ -84,10 +84,10 @@ public class MainActivity extends AppCompatActivity {
             editor.apply();
 
             if (isChecked) {
-                mainLayout.setBackgroundResource(R.drawable.bg_main_home_night); // dark bg
+                mainLayout.setBackgroundResource(R.drawable.bg_main_dark); // dark bg
                 //NOTE: create a night version of bg_main_home image
             } else {
-                mainLayout.setBackgroundResource(R.drawable.bg_main_home); // light bg
+                mainLayout.setBackgroundResource(R.drawable.bg_main_light); // light bg
             }
         });
 

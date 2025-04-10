@@ -1,5 +1,7 @@
 package com.gameproject;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Rect;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -11,6 +13,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+
 import java.util.Random;
 
 public class GameLogic extends AppCompatActivity {
@@ -60,11 +64,23 @@ public class GameLogic extends AppCompatActivity {
     private Pipe pipeNorthObj2;
     private Pipe pipeSouthObj2;
     private TextView scoreTextView;
+    ConstraintLayout gameLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
+
+        gameLayout = findViewById(R.id.gameLayout);
+
+        SharedPreferences preferences = getSharedPreferences("settings", MODE_PRIVATE);
+        boolean isDark = preferences.getBoolean("dark_mode", false);
+
+        if (isDark) {
+            gameLayout.setBackgroundResource(R.drawable.bg_night);
+        } else {
+            gameLayout.setBackgroundResource(R.drawable.bg_day);
+        }
 
         scoreTextView = findViewById(R.id.textView);
 
@@ -286,6 +302,8 @@ public class GameLogic extends AppCompatActivity {
         RedPipeSouth.setVisibility(View.INVISIBLE);
         RedPipeSouth2.setVisibility(View.INVISIBLE);
         birdImage.setVisibility(View.INVISIBLE);
+        Intent gameOverIntent = new Intent(GameLogic.this, GameOver.class);
+        startActivity(gameOverIntent);
     }
 
     public boolean hitFloor() {
