@@ -75,4 +75,20 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/arrow_left" />
 
+
+    <ImageButton
+        android:id="@+id/buttonEquipped"
+        android:layout_width="226dp"
+        android:layout_height="89dp"
+        android:layout_marginStart="91dp"
+        android:layout_marginTop="498dp"
+        android:background="#00FFFFFF"
+        android:backgroundTint="#00FFFFFF"
+        android:clickable="true"
+        android:scaleType="fitXY"
+        android:visibility="invisible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/button_equipped" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

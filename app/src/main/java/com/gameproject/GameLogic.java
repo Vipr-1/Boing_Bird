@@ -94,8 +94,14 @@ public class GameLogic extends AppCompatActivity {
         RedPipeSouth = findViewById(R.id.RedSouth);
         RedPipeSouth2 = findViewById(R.id.RedSouth2);
 
+
         birdImage = findViewById(R.id.birdImage);
         bird = new Bird(birdImage);
+
+        SharedPreferences birdPreferences = getSharedPreferences("settings", MODE_PRIVATE);
+        int birdRes = birdPreferences.getInt("chosen_bird", R.drawable.bird_default); // Default to bird_default if not set
+        bird.setSkin(birdRes);
+
 
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);

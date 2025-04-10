@@ -1,55 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    android:id="@+id/how_to_play_layout"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/how_to_play"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_day">
+    android:background="@drawable/bg_how_light"
+    tools:context=".GameLogic">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:padding="20dp"
-        android:gravity="center">
+    <ImageButton
+        android:id="@+id/buttonBackHow"
+        android:layout_width="226dp"
+        android:layout_height="89dp"
+        android:layout_marginStart="92dp"
+        android:layout_marginTop="740dp"
+        android:background="#00FFFFFF"
+        android:clickable="true"
+        android:scaleType="fitXY"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/button_back2" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingBottom="20dp"
-            android:text="How to Play"
-            android:textColor="@color/black"
-            android:textAlignment="center"
-            android:textSize="50sp"
-            android:textStyle="bold" />
 
-        <TextView
-            android:layout_width="325dp"
-            android:layout_height="269dp"
-            android:padding="10dp"
-            android:text="Tap the screen to make the bird jump
-            \n\nAvoid hitting the ground, pipes, and
-            \n\nthe plants that are coming
-            \n\nout of the pipes
-            \n\nEarn points by passing through gaps.
-            \n\nTry to get the highest score!
-            \n\nGood Luck"
-            android:textAlignment="center"
-            android:textColor="@color/black"
-            android:textSize="17.5sp"
-            android:textStyle="bold" />
-
-        <ImageButton
-            android:id="@+id/buttonBackRed"
-            android:layout_width="217dp"
-            android:layout_height="96dp"
-            android:background="#00FFFFFF"
-            android:clickable="true"
-            android:cropToPadding="true"
-            android:scaleType="fitXY"
-            app:srcCompat="@drawable/button_back1" />
-
-    </LinearLayout>
-
-</FrameLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

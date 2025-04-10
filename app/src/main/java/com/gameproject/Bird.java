@@ -30,8 +30,8 @@ public class Bird {
         birdImage.setY(birdY);
     }
 
-    public void setSkin(ImageView birdImage){
-        this.birdImage = birdImage;
+    public void setSkin(int skinResID){
+        this.birdImage.setImageResource(skinResID);
     }
 
     // bird jump

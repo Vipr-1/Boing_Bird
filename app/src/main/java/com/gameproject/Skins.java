@@ -1,5 +1,6 @@
 package com.gameproject;
 
+import android.content.SharedPreferences;
 import android.media.Image;
 import android.os.Bundle;
 import android.util.Pair;
@@ -10,6 +11,7 @@ import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.net.BindException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,10 +22,14 @@ public class Skins extends AppCompatActivity{
     // The int corresponds to the id of the imageview of the bird in drawables
     // the boolean indicates if the bird is wearing a hat or not so that we can modify the margins of the game depending on that.
     private Map<String, Pair<Integer, Boolean>> birdSkinImages;
+    private Bird gameBird;
     public ImageView birdImage;
     public ImageButton buttonLeft;
     public ImageButton buttonRight;
+    public ImageButton buttonEquipped;
+    public ImageButton buttonEquip;
     public String[] birdNames;
+    public int birdChosen;
 
     public static int CURRENT_BIRD_INDEX = 0;
 
@@ -72,26 +78,60 @@ public class Skins extends AppCompatActivity{
             }
         });
 
-
-
         // use the back button to go back
         ImageButton backButton = findViewById(R.id.buttonBack);
         backButton.setOnClickListener(v -> finish());
 
+        equipSkin();
+
+    }
+
+    private void equipSkin(){
+        // the button equipped is invisible and disable in the screen
+        buttonEquipped = findViewById(R.id.buttonEquipped);
+        buttonEquipped.setVisibility(View.INVISIBLE);
+        buttonEquipped.setEnabled(false);
+
+        buttonEquip = findViewById(R.id.buttonEquip);
+        buttonEquip.setOnClickListener(v -> {
+
+            String currentBird = birdNames[CURRENT_BIRD_INDEX];
+            birdChosen = getSkinImage(currentBird);
+
+            // Save the selected bird's skin to SharedPreferences when user chooses the bird
+            SharedPreferences preferences = getSharedPreferences("settings", MODE_PRIVATE);
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putInt("chosen_bird", birdChosen);
+            editor.apply();
+
+            // when button equip is clicked button equip is invisible and equipped is visible
+            buttonEquip.setVisibility(View.INVISIBLE);
+            buttonEquip.setEnabled(false);
+
+            buttonEquipped.setVisibility(View.VISIBLE);
+            buttonEquipped.setEnabled(true);
+                });
     }
 
     private void updateBirdSkin(){
         String currentBird = birdNames[CURRENT_BIRD_INDEX];
         int currentBirdImage = birdSkinImages.get(currentBird).first;
         birdImage.setImageResource(currentBirdImage);
+
+
     }
 
     public boolean doesBirdHaveHat(String birdName){
         return birdSkinImages.getOrDefault(birdName, new Pair<>(R.drawable.bird_default, false)).second;
     }
 
+    public int getBirdChosen(){
+        return birdChosen;
+    }
+
    public int getSkinImage(String birdName){
             return birdSkinImages.getOrDefault(birdName, new Pair<>(R.drawable.bird_default, false)).first;
     }
+
 
 }
