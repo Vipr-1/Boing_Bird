@@ -94,7 +94,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@drawable/bird_default" />
 
-
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="118dp"
+        android:layout_height="66dp"
+        android:text="0"
+        tools:layout_editor_absoluteX="26dp"
+        tools:layout_editor_absoluteY="32dp" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
