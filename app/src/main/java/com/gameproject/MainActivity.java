@@ -15,6 +15,11 @@ import android.widget.ImageButton;
 import android.media.MediaPlayer;
 import android.widget.ToggleButton;
 
+import android.widget.Switch;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import android.content.SharedPreferences;
+
+
 
 
 public class MainActivity extends AppCompatActivity {
@@ -22,6 +27,11 @@ public class MainActivity extends AppCompatActivity {
     //Music player and toggle
     MediaPlayer mediaPlayer;
     ToggleButton muteToggle;
+
+    Switch darkModeSwitch;
+    ConstraintLayout mainLayout;
+    SharedPreferences preferences;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +67,30 @@ public class MainActivity extends AppCompatActivity {
                 mediaPlayer.start();
             }
         });
+
+        mainLayout = findViewById(R.id.main);
+        darkModeSwitch = findViewById(R.id.switch1);
+        preferences = getSharedPreferences("settings", MODE_PRIVATE);
+
+        // Restore saved mode
+        boolean isDark = preferences.getBoolean("dark_mode", false);
+        mainLayout.setBackgroundResource(isDark ? R.drawable.bg_night : R.drawable.bg_main_home);
+        darkModeSwitch.setChecked(isDark);
+
+        // Toggle background on switch
+        darkModeSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putBoolean("dark_mode", isChecked);
+            editor.apply();
+
+            if (isChecked) {
+                mainLayout.setBackgroundResource(R.drawable.bg_main_home_night); // dark bg
+                //NOTE: create a night version of bg_main_home image
+            } else {
+                mainLayout.setBackgroundResource(R.drawable.bg_main_home); // light bg
+            }
+        });
+
 
     }
     /**

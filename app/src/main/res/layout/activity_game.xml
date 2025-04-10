@@ -9,70 +9,70 @@
     tools:context=".GameLogic">
 
     <ImageView
-        android:id="@+id/RedSouth2"
-        android:layout_width="115dp"
-        android:layout_height="440dp"
-        android:layout_marginStart="236dp"
+        android:id="@+id/RedNorth2"
+        android:layout_width="152dp"
+        android:layout_height="442dp"
+        android:layout_marginStart="144dp"
         android:rotationX="180"
         app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/pipe_top_red"
-        tools:layout_editor_absoluteY="135dp" />
-
-    <ImageView
-        android:id="@+id/RedSouth"
-        android:layout_width="115dp"
-        android:layout_height="440dp"
-        android:layout_marginStart="236dp"
-        android:rotationX="180"
-        app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/pipe_top_red"
-        tools:layout_editor_absoluteY="135dp" />
+        app:srcCompat="@drawable/pipe_red_south"
+        tools:layout_editor_absoluteY="293dp" />
 
     <ImageView
         android:id="@+id/RedNorth"
-        android:layout_width="115dp"
-        android:layout_height="440dp"
-        android:layout_marginStart="28dp"
+        android:layout_width="152dp"
+        android:layout_height="442dp"
+        android:layout_marginStart="168dp"
+        android:rotationX="180"
         app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/pipe_top_red"
-        tools:layout_editor_absoluteY="145dp" />
+        app:srcCompat="@drawable/pipe_red_south"
+        tools:layout_editor_absoluteY="7dp" />
 
     <ImageView
-        android:id="@+id/RedNorth2"
-        android:layout_width="115dp"
-        android:layout_height="440dp"
-        android:layout_marginStart="28dp"
+        android:id="@+id/RedSouth2"
+        android:layout_width="152dp"
+        android:layout_height="442dp"
+        android:layout_marginStart="144dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/pipe_top_red"
-        tools:layout_editor_absoluteY="145dp" />
+        app:srcCompat="@drawable/pipe_red_south"
+        tools:layout_editor_absoluteY="293dp" />
+
+    <ImageView
+        android:id="@+id/RedSouth"
+        android:layout_width="152dp"
+        android:layout_height="442dp"
+        android:layout_marginStart="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/pipe_red_south"
+        tools:layout_editor_absoluteY="326dp" />
 
     <ImageView
         android:id="@+id/pipeNorth"
         android:layout_width="115dp"
         android:layout_height="440dp"
-        android:layout_marginStart="108dp"
+        android:layout_marginStart="280dp"
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@drawable/pipe_top"
-        tools:layout_editor_absoluteY="145dp" />
+        tools:layout_editor_absoluteY="-218dp" />
 
     <ImageView
         android:id="@+id/pipeNorth2"
         android:layout_width="115dp"
         android:layout_height="440dp"
-        android:layout_marginStart="108dp"
+        android:layout_marginStart="240dp"
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@drawable/pipe_top"
-        tools:layout_editor_absoluteY="145dp" />
+        tools:layout_editor_absoluteY="123dp" />
 
     <ImageView
         android:id="@+id/pipeSouth"
         android:layout_width="115dp"
         android:layout_height="440dp"
-        android:layout_marginStart="280dp"
+        android:layout_marginStart="132dp"
         android:rotationX="180"
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@drawable/pipe_top"
-        tools:layout_editor_absoluteY="293dp" />
+        tools:layout_editor_absoluteY="308dp" />
 
     <ImageView
         android:id="@+id/pipeSouth2"
@@ -94,15 +94,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@drawable/bird_default" />
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="217dp"
-        android:layout_height="142dp"
-        android:text="0"
-        android:textSize="100dp"
-        app:autoSizeTextType="none"
-        tools:layout_editor_absoluteX="161dp"
-        tools:layout_editor_absoluteY="51dp" />
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
