@@ -1,5 +1,6 @@
 package com.gameproject;
 
+import android.content.Intent;
 import android.graphics.Rect;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -286,6 +287,8 @@ public class GameLogic extends AppCompatActivity {
         RedPipeSouth.setVisibility(View.INVISIBLE);
         RedPipeSouth2.setVisibility(View.INVISIBLE);
         birdImage.setVisibility(View.INVISIBLE);
+        Intent gameOverIntent = new Intent(GameLogic.this, GameOver.class);
+        startActivity(gameOverIntent);
     }
 
     public boolean hitFloor() {
