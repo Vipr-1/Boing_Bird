@@ -308,8 +308,9 @@ public class GameLogic extends AppCompatActivity {
         RedPipeSouth.setVisibility(View.INVISIBLE);
         RedPipeSouth2.setVisibility(View.INVISIBLE);
         birdImage.setVisibility(View.INVISIBLE);
-        Intent gameOverIntent = new Intent(GameLogic.this, GameOver.class);
-        startActivity(gameOverIntent);
+        //Intent gameOverIntent = new Intent(GameLogic.this, GameOver.class);
+        //startActivity(gameOverIntent);
+
     }
 
     public boolean hitFloor() {
