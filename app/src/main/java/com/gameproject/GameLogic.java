@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -38,6 +39,14 @@ public class GameLogic extends AppCompatActivity {
     private ImageView RedPipeNorth2;
     private ImageView RedPipeSouth;
     private ImageView RedPipeSouth2;
+
+    private ImageView scoreBoard;
+    private TextView gameOver;
+    private TextView bestScore;
+    private TextView currentScore;
+
+    private ImageButton playAgain;
+    private ImageButton backButton;
 
     private boolean gameStarted = false;
     private int screenWidth;
@@ -82,7 +91,30 @@ public class GameLogic extends AppCompatActivity {
             gameLayout.setBackgroundResource(R.drawable.bg_day);
         }
 
-        scoreTextView = findViewById(R.id.textView);
+        gameOver = findViewById(R.id.gameOverText);
+        gameOver.setVisibility(View.INVISIBLE);
+
+        scoreBoard = findViewById(R.id.resultBoard);
+        scoreBoard.setVisibility(View.INVISIBLE);
+
+        bestScore = findViewById(R.id.bestScore);
+        bestScore.setVisibility(View.INVISIBLE);
+
+        currentScore = findViewById(R.id.currentScore);
+        currentScore.setVisibility(View.INVISIBLE);
+
+        playAgain = findViewById(R.id.buttonPlayAgain);
+        playAgain.setVisibility(View.INVISIBLE);
+
+        backButton = findViewById(R.id.buttonBackYellow);
+        backButton.setVisibility(View.INVISIBLE);
+
+        backButton.setOnClickListener(v -> finish());
+
+
+        playAgain.setOnClickListener(v -> restart());
+
+        scoreTextView = findViewById(R.id.score);
 
         pipeNorthImage = findViewById(R.id.pipeNorth);
         pipeSouthImage = findViewById(R.id.pipeSouth);
@@ -191,7 +223,7 @@ public class GameLogic extends AppCompatActivity {
         bird.birdY += bird.velocityY;
         birdImage.setY(bird.birdY);
 
-        if (hitFloor() && checkForCollisions()) {
+        if (hitFloor()|| checkForCollisions()) {
             bird.isDead = true;
             bird.velocityY = 0;
             deathSFX.start(); //play death sound when dead
@@ -295,10 +327,32 @@ public class GameLogic extends AppCompatActivity {
     }
 
     public void restart() {
+        gameOver.setVisibility(View.INVISIBLE);
+        scoreBoard.setVisibility(View.INVISIBLE);
+        backButton.setVisibility(View.INVISIBLE);
+        playAgain.setVisibility(View.INVISIBLE);
+        bestScore.setVisibility(View.INVISIBLE);
+        currentScore.setVisibility(View.INVISIBLE);
+
+        birdImage.setVisibility(View.VISIBLE);
+
         startGame();
+        gameStarted = true;
+        handler.postDelayed(gameLoop, FRAME_RATE);
     }
 
     public void GameOver() {
+        gameOver.setVisibility(View.VISIBLE);
+        scoreBoard.setVisibility(View.VISIBLE);
+        backButton.setVisibility(View.VISIBLE);
+        playAgain.setVisibility(View.VISIBLE);
+        bestScore.setVisibility(View.VISIBLE);
+        currentScore.setVisibility(View.VISIBLE);
+
+        currentScore.setText(""+ score);
+
+
+
         pipeSouthImage.setVisibility(View.INVISIBLE);
         pipeNorthImage.setVisibility(View.INVISIBLE);
         pipeSouthTwo.setVisibility(View.INVISIBLE);
@@ -341,4 +395,7 @@ public class GameLogic extends AppCompatActivity {
     public int bestScore() {
         return score;
     }
+
+
+
 }
