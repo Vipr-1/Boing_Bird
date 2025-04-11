@@ -139,6 +139,24 @@ public class Skins extends AppCompatActivity{
         int currentBirdImage = birdSkinImages.get(currentBird).first;
         birdImage.setImageResource(currentBirdImage);
 
+        // Check from SharedPreferences if the current bird is equipped
+        SharedPreferences preferences = getSharedPreferences("settings", MODE_PRIVATE);
+        int equippedBirdImage = preferences.getInt("chosen_bird", R.drawable.bird_default);
+
+        if (currentBirdImage == equippedBirdImage) {
+            buttonEquip.setVisibility(View.INVISIBLE);
+            buttonEquip.setEnabled(false);
+
+            buttonEquipped.setVisibility(View.VISIBLE);
+            buttonEquipped.setEnabled(true);
+        } else {
+            buttonEquipped.setVisibility(View.INVISIBLE);
+            buttonEquipped.setEnabled(false);
+
+            buttonEquip.setVisibility(View.VISIBLE);
+            buttonEquip.setEnabled(true);
+        }
+
 
     }
 
