@@ -151,7 +151,7 @@ public class HardLevel extends AppCompatActivity {
         birdImage.setY(bird.birdY);
 
         // Check collisions or if the bird has hit the floor
-        if (hitFloor() && checkForCollisions()) {
+        if (hitFloor() || checkForCollisions()) {
             bird.isDead = true;
             bird.velocityY = 0;
             deathSFX.start();
