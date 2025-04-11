@@ -16,6 +16,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import android.content.SharedPreferences;
+
+
 public class Skins extends AppCompatActivity{
 
     // Map that indicates that we will save a String corresponding to the bird and a pair of int and boolean.
@@ -30,6 +33,9 @@ public class Skins extends AppCompatActivity{
     public ImageButton buttonEquip;
     public String[] birdNames;
     public int birdChosen;
+
+    private ImageView bgImage; //for the background change
+
 
     public static int CURRENT_BIRD_INDEX = 0;
 
@@ -83,6 +89,21 @@ public class Skins extends AppCompatActivity{
         backButton.setOnClickListener(v -> finish());
 
         equipSkin();
+
+        //implementation
+        bgImage = findViewById(R.id.bgDay);
+
+        // Load dark mode state
+        SharedPreferences preferences = getSharedPreferences("settings", MODE_PRIVATE);
+        boolean isDark = preferences.getBoolean("dark_mode", false);
+
+        // Change background image
+        if (isDark) {
+            bgImage.setImageResource(R.drawable.bg_skins_dark); // your dark background image
+        } else {
+            bgImage.setImageResource(R.drawable.bg_empty); // your light background image
+        }
+
 
     }
 
