@@ -77,19 +77,19 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/button_how_to_play" />
 
-    <ImageView
+    <ImageButton
         android:id="@+id/buttonHardLevel"
-        android:layout_width="190dp"
-        android:layout_height="67dp"
-        android:layout_marginStart="107dp"
-        android:layout_marginTop="528dp"
+        android:layout_width="216dp"
+        android:layout_height="85dp"
+        android:layout_marginStart="96dp"
+        android:layout_marginTop="520dp"
+        android:backgroundTint="#00FFFFFF"
         android:clickable="true"
         android:cropToPadding="true"
         android:scaleType="fitXY"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/button_hard_level" />
-
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
