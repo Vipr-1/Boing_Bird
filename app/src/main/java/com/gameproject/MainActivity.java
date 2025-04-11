@@ -54,6 +54,10 @@ public class MainActivity extends AppCompatActivity {
         ImageButton howToPlayButton = findViewById(R.id.image3);
         howToPlayButton.setOnClickListener(v -> openHowToPlay());
 
+        // clicking the Hard Level Button
+        ImageButton hardLevelButton = findViewById(R.id.buttonHardLevel);
+        hardLevelButton.setOnClickListener(v -> openHardLevel());
+
         //music toggle button setup
         mediaPlayer = MediaPlayer.create(this, R.raw.music_q);
         mediaPlayer.setLooping(true);
@@ -109,6 +113,10 @@ public class MainActivity extends AppCompatActivity {
     // Opens the How to Play screen
     protected void openHowToPlay() {
         Intent intent = new Intent(MainActivity.this, HowToPlay.class);
+        startActivity(intent);
+    }
+    protected void openHardLevel() {
+        Intent intent = new Intent(MainActivity.this, HardLevel.class);
         startActivity(intent);
     }
 

@@ -170,7 +170,7 @@ public class GameLogic extends AppCompatActivity {
                     handler.postDelayed(gameLoop, FRAME_RATE);
                 } else if (!bird.isDead) {
                     bird.jump();
-                    jumpSFX.start(); //play boing when jumping
+                    jumpSFX.start();
                 }
             }
         });
@@ -188,6 +188,7 @@ public class GameLogic extends AppCompatActivity {
         scoredFirstPipePair = false;
         scoredSecondPipePair = false;
         pipesSwitched = false;
+        scoreTextView.setText(String.valueOf(score));
 
         pipeSouthImage.setVisibility(View.INVISIBLE);
         pipeNorthImage.setVisibility(View.INVISIBLE);
@@ -226,7 +227,7 @@ public class GameLogic extends AppCompatActivity {
         if (hitFloor()|| checkForCollisions()) {
             bird.isDead = true;
             bird.velocityY = 0;
-            deathSFX.start(); //play death sound when dead
+            deathSFX.start();
             GameOver();
             return;
         }
@@ -362,9 +363,7 @@ public class GameLogic extends AppCompatActivity {
         RedPipeSouth.setVisibility(View.INVISIBLE);
         RedPipeSouth2.setVisibility(View.INVISIBLE);
         birdImage.setVisibility(View.INVISIBLE);
-        //Intent gameOverIntent = new Intent(GameLogic.this, GameOver.class);
-        //startActivity(gameOverIntent);
-
+\
     }
 
     public boolean hitFloor() {

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/gameLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_day"
+    tools:context=".HardLevel">
+
+
+    <ImageView
+        android:id="@+id/RedNorth2"
+        android:layout_width="152dp"
+        android:layout_height="442dp"
+        android:layout_marginStart="144dp"
+        android:rotationX="180"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/pipe_red_south"
+        tools:layout_editor_absoluteY="293dp" />
+
+    <ImageView
+        android:id="@+id/RedNorth"
+        android:layout_width="152dp"
+        android:layout_height="442dp"
+        android:layout_marginStart="168dp"
+        android:rotationX="180"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/pipe_red_south"
+        tools:layout_editor_absoluteY="7dp" />
+
+    <ImageView
+        android:id="@+id/RedSouth2"
+        android:layout_width="152dp"
+        android:layout_height="442dp"
+        android:layout_marginStart="144dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/pipe_red_south"
+        tools:layout_editor_absoluteY="293dp" />
+
+    <ImageView
+        android:id="@+id/RedSouth"
+        android:layout_width="152dp"
+        android:layout_height="442dp"
+        android:layout_marginStart="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/pipe_red_south"
+        tools:layout_editor_absoluteY="326dp" />
+
+    <ImageView
+        android:id="@+id/birdImage"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="84dp"
+        android:layout_marginBottom="292dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/bird_default" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="118dp"
+        android:layout_height="66dp"
+        android:layout_marginStart="146dp"
+        android:layout_marginTop="80dp"
+        android:layout_marginEnd="146dp"
+        android:layout_marginBottom="791dp"
+        android:fontFamily="@font/pixelmix_bold"
+        android:text="0"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:textSize="50sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
