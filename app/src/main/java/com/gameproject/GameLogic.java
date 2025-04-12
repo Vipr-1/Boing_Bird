@@ -363,7 +363,6 @@ public class GameLogic extends AppCompatActivity {
         RedPipeSouth.setVisibility(View.INVISIBLE);
         RedPipeSouth2.setVisibility(View.INVISIBLE);
         birdImage.setVisibility(View.INVISIBLE);
-\
     }
 
     public boolean hitFloor() {
