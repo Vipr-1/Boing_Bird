@@ -151,7 +151,7 @@ public class HardLevel extends AppCompatActivity {
         birdImage.setY(bird.birdY);
 
         // Check collisions or if the bird has hit the floor
-        if (hitFloor() && checkForCollisions()) {
+        if (hitFloor() || checkForCollisions()) {
             bird.isDead = true;
             bird.velocityY = 0;
             deathSFX.start();
@@ -244,12 +244,17 @@ public class HardLevel extends AppCompatActivity {
 
         Rect pipeNorthRect = new Rect();
         pipeNorthImage.getHitRect(pipeNorthRect);
+        pipeNorthRect.inset(140, 30);
         Rect pipeSouthRect = new Rect();
         pipeSouthImage.getHitRect(pipeSouthRect);
+        pipeSouthRect.inset(140, 30);
         Rect pipeNorthRect2 = new Rect();
         pipeNorthTwo.getHitRect(pipeNorthRect2);
+        pipeNorthRect2.inset(140, 30);
         Rect pipeSouthRect2 = new Rect();
         pipeSouthTwo.getHitRect(pipeSouthRect2);
+        pipeSouthRect2.inset(140, 30);
+
 
         return Rect.intersects(birdRect, pipeNorthRect) ||
                 Rect.intersects(birdRect, pipeSouthRect) ||

@@ -7,7 +7,6 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -131,7 +130,7 @@ public class GameLogic extends AppCompatActivity {
         bird = new Bird(birdImage);
 
         SharedPreferences birdPreferences = getSharedPreferences("settings", MODE_PRIVATE);
-        int birdRes = birdPreferences.getInt("chosen_bird", R.drawable.bird_default); // Default to bird_default if not set
+        int birdRes = birdPreferences.getInt("chosen_bird", R.drawable.bird_default);
         bird.setSkin(birdRes);
 
 
@@ -237,7 +236,6 @@ public class GameLogic extends AppCompatActivity {
     }
 
     private void switchToRedPipes() {
-        // Fetch red pipe ImageViews from the layout
         ImageView newPipeNorth = findViewById(R.id.RedNorth);
         ImageView newPipeSouth = findViewById(R.id.RedSouth);
         ImageView newPipeNorthTwo = findViewById(R.id.RedNorth2);
@@ -315,7 +313,6 @@ public class GameLogic extends AppCompatActivity {
     }
 
 
-    // Increase pipe speed at set thresholds
     private void updatePipeSpeed() {
         if (score >= nextScoreThreshold) {
             currentPipeSpeed++;
@@ -328,6 +325,7 @@ public class GameLogic extends AppCompatActivity {
     }
 
     public void restart() {
+
         gameOver.setVisibility(View.INVISIBLE);
         scoreBoard.setVisibility(View.INVISIBLE);
         backButton.setVisibility(View.INVISIBLE);
@@ -335,11 +333,46 @@ public class GameLogic extends AppCompatActivity {
         bestScore.setVisibility(View.INVISIBLE);
         currentScore.setVisibility(View.INVISIBLE);
 
+        pipeSouthImage.setVisibility(View.INVISIBLE);
+        pipeNorthImage.setVisibility(View.INVISIBLE);
+        pipeSouthTwo.setVisibility(View.INVISIBLE);
+        pipeNorthTwo.setVisibility(View.INVISIBLE);
+        RedPipeNorth.setVisibility(View.INVISIBLE);
+        RedPipeNorth2.setVisibility(View.INVISIBLE);
+        RedPipeSouth.setVisibility(View.INVISIBLE);
+        RedPipeSouth2.setVisibility(View.INVISIBLE);
+
         birdImage.setVisibility(View.VISIBLE);
 
-        startGame();
+        score = 0;
+        currentPipeSpeed = base_pipe_speed;
+        nextScoreThreshold = 10;
+        scoredFirstPipePair = false;
+        scoredSecondPipePair = false;
+        pipesSwitched = false;
+
+        resetPipesPositions();
+
+        bird.birdX = 539;
+        bird.birdY = 1169;
+        bird.velocityY = 0;
+        bird.isDead = false;
+
+        scoreTextView.setText(String.valueOf(score));
+
+        randomizePipePair(pipeNorthObj, pipeSouthObj);
+        randomizePipePair(pipeNorthObj2, pipeSouthObj2);
+
         gameStarted = true;
         handler.postDelayed(gameLoop, FRAME_RATE);
+    }
+
+    private void resetPipesPositions() {
+        pipeNorthObj.setPipeX(-pipeNorthImage.getWidth());
+        pipeSouthObj.setPipeX(-pipeNorthImage.getWidth());
+
+        pipeNorthObj2.setPipeX(-pipeNorthTwo.getWidth() - (screenWidth / 2));
+        pipeSouthObj2.setPipeX(-pipeNorthTwo.getWidth() - (screenWidth / 2));
     }
 
     public void GameOver() {
@@ -352,8 +385,6 @@ public class GameLogic extends AppCompatActivity {
 
         currentScore.setText(""+ score);
 
-
-
         pipeSouthImage.setVisibility(View.INVISIBLE);
         pipeNorthImage.setVisibility(View.INVISIBLE);
         pipeSouthTwo.setVisibility(View.INVISIBLE);
@@ -363,7 +394,6 @@ public class GameLogic extends AppCompatActivity {
         RedPipeSouth.setVisibility(View.INVISIBLE);
         RedPipeSouth2.setVisibility(View.INVISIBLE);
         birdImage.setVisibility(View.INVISIBLE);
-\
     }
 
     public boolean hitFloor() {
@@ -376,12 +406,17 @@ public class GameLogic extends AppCompatActivity {
 
         Rect pipeNorthRect = new Rect();
         pipeNorthImage.getHitRect(pipeNorthRect);
+        pipeNorthRect.inset(70, 20);
         Rect pipeSouthRect = new Rect();
         pipeSouthImage.getHitRect(pipeSouthRect);
+        pipeSouthRect.inset(70, 20);
         Rect pipeNorthRect2 = new Rect();
         pipeNorthTwo.getHitRect(pipeNorthRect2);
+        pipeNorthRect2.inset(70, 20);
         Rect pipeSouthRect2 = new Rect();
         pipeSouthTwo.getHitRect(pipeSouthRect2);
+        pipeSouthRect2.inset(70, 20);
+
         return Rect.intersects(birdRect, pipeNorthRect) ||
                 Rect.intersects(birdRect, pipeSouthRect) ||
                 Rect.intersects(birdRect, pipeNorthRect2) ||
