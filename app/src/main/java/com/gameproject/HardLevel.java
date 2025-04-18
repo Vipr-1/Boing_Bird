@@ -7,12 +7,17 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.DisplayMetrics;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import org.json.JSONObject;
+
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.util.Random;
 
 public class HardLevel extends AppCompatActivity {
@@ -40,6 +45,14 @@ public class HardLevel extends AppCompatActivity {
     private Pipe pipeSouthObj2;
 
     private TextView scoreTextView;
+
+    private TextView gameOver;
+    private ImageView scoreBoard;
+    private TextView bestScore;
+    private TextView currentScore;
+    private ImageButton playAgain;
+    private ImageButton backButton;
+
     private ConstraintLayout gameLayout;
     private ImageView birdImage;
 
@@ -53,6 +66,9 @@ public class HardLevel extends AppCompatActivity {
     private boolean firstPipeScored = false;
     private boolean secondPipeScored = false;
 
+    private static final String best_score_file = "best_score_hardlevel.json";
+    private static final String best_score_key = "bestScore";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,6 +81,25 @@ public class HardLevel extends AppCompatActivity {
 
         scoreTextView = findViewById(R.id.textView);
 
+        gameOver = findViewById(R.id.gameOverText);
+        scoreBoard = findViewById(R.id.resultBoard);
+        bestScore = findViewById(R.id.bestScore);
+        currentScore = findViewById(R.id.currentScore);
+        playAgain = findViewById(R.id.buttonPlayAgain);
+        backButton = findViewById(R.id.buttonBackYellow);
+
+        // Set initial UI visibility to INVISIBLE
+        gameOver.setVisibility(View.INVISIBLE);
+        scoreBoard.setVisibility(View.INVISIBLE);
+        bestScore.setVisibility(View.INVISIBLE);
+        currentScore.setVisibility(View.INVISIBLE);
+        playAgain.setVisibility(View.INVISIBLE);
+        backButton.setVisibility(View.INVISIBLE);
+
+        // Button click listeners
+        playAgain.setOnClickListener(v -> restart());
+        backButton.setOnClickListener(v -> finish());
+
         pipeNorthImage = findViewById(R.id.RedNorth);
         pipeSouthImage = findViewById(R.id.RedSouth);
         pipeNorthTwo = findViewById(R.id.RedNorth2);
@@ -75,6 +110,7 @@ public class HardLevel extends AppCompatActivity {
         pipeNorthTwo.setVisibility(View.INVISIBLE);
         pipeSouthTwo.setVisibility(View.INVISIBLE);
 
+        // Bird setup
         birdImage = findViewById(R.id.birdImage);
         bird = new Bird(birdImage);
         SharedPreferences birdPreferences = getSharedPreferences("settings", MODE_PRIVATE);
@@ -90,6 +126,7 @@ public class HardLevel extends AppCompatActivity {
         pipeNorthObj2 = new Pipe(pipeNorthTwo, base_pipe_speed);
         pipeSouthObj2 = new Pipe(pipeSouthTwo, base_pipe_speed);
 
+        // Set game state variables
         currentPipeSpeed = base_pipe_speed;
         score = 0;
         nextScoreThreshold = 5;
@@ -112,7 +149,6 @@ public class HardLevel extends AppCompatActivity {
     }
 
     public void startGame() {
-        // Set initial bird position
         bird.birdX = screenWidth / 2;
         bird.birdY = 1169;
         bird.velocityY = 0;
@@ -125,6 +161,7 @@ public class HardLevel extends AppCompatActivity {
         firstPipeScored = false;
         secondPipeScored = false;
 
+        // Randomize positions for both pipe pairs
         randomizePipePair(pipeNorthObj, pipeSouthObj);
         randomizePipePair(pipeNorthObj2, pipeSouthObj2);
     }
@@ -150,7 +187,6 @@ public class HardLevel extends AppCompatActivity {
         bird.birdY += bird.velocityY;
         birdImage.setY(bird.birdY);
 
-        // Check collisions or if the bird has hit the floor
         if (hitFloor() || checkForCollisions()) {
             bird.isDead = true;
             bird.velocityY = 0;
@@ -187,7 +223,6 @@ public class HardLevel extends AppCompatActivity {
             secondPipeShown = false;
             firstPipeScored = false;
         }
-
         if (pipeSouthTwo.getVisibility() == View.VISIBLE && pipeSouthObj2.getPipeX() >= screenWidth) {
             randomizePipePair(pipeNorthObj2, pipeSouthObj2);
             secondPipeScored = false;
@@ -202,8 +237,8 @@ public class HardLevel extends AppCompatActivity {
             updateScoreDisplay();
         }
 
-        if (pipeSouthTwo.getVisibility() == View.VISIBLE && !secondPipeScored &&
-                (pipeNorthObj2.getPipeX() + pipeNorthTwo.getWidth() < bird.birdX)) {
+        if (pipeSouthTwo.getVisibility() == View.VISIBLE &&
+                !secondPipeScored && (pipeNorthObj2.getPipeX() + pipeNorthTwo.getWidth() < bird.birdX)) {
             score++;
             secondPipeScored = true;
             updatePipeSpeed();
@@ -224,14 +259,6 @@ public class HardLevel extends AppCompatActivity {
             pipeNorthObj2.setSpeed(currentPipeSpeed);
             pipeSouthObj2.setSpeed(currentPipeSpeed);
         }
-    }
-
-    public void GameOver() {
-        pipeNorthImage.setVisibility(View.INVISIBLE);
-        pipeSouthImage.setVisibility(View.INVISIBLE);
-        pipeNorthTwo.setVisibility(View.INVISIBLE);
-        pipeSouthTwo.setVisibility(View.INVISIBLE);
-        birdImage.setVisibility(View.INVISIBLE);
     }
 
     public boolean hitFloor() {
@@ -255,10 +282,64 @@ public class HardLevel extends AppCompatActivity {
         pipeSouthTwo.getHitRect(pipeSouthRect2);
         pipeSouthRect2.inset(140, 30);
 
-
         return Rect.intersects(birdRect, pipeNorthRect) ||
                 Rect.intersects(birdRect, pipeSouthRect) ||
                 Rect.intersects(birdRect, pipeNorthRect2) ||
                 Rect.intersects(birdRect, pipeSouthRect2);
+    }
+
+    private void saveBestScore(int bestScoreVal) {
+        try {
+            JSONObject json = new JSONObject();
+            json.put(best_score_key, bestScoreVal);
+            try (FileOutputStream fos = openFileOutput(best_score_file, MODE_PRIVATE)) {
+                fos.write(json.toString().getBytes());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private int loadBestScore() {
+        try (FileInputStream fis = openFileInput(best_score_file)) {
+            byte[] data = new byte[fis.available()];
+            fis.read(data);
+            JSONObject json = new JSONObject(new String(data));
+            return json.optInt(best_score_key, 0);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
+    public void GameOver() {
+        // Hide game elements
+        pipeNorthImage.setVisibility(View.INVISIBLE);
+        pipeSouthImage.setVisibility(View.INVISIBLE);
+        pipeNorthTwo.setVisibility(View.INVISIBLE);
+        pipeSouthTwo.setVisibility(View.INVISIBLE);
+        birdImage.setVisibility(View.INVISIBLE);
+
+        gameOver.setVisibility(View.VISIBLE);
+        scoreBoard.setVisibility(View.VISIBLE);
+        bestScore.setVisibility(View.VISIBLE);
+        currentScore.setVisibility(View.VISIBLE);
+        playAgain.setVisibility(View.VISIBLE);
+        backButton.setVisibility(View.VISIBLE);
+
+        currentScore.setText("" + score);
+
+        int savedBestScore = loadBestScore();
+        if (score > savedBestScore) {
+            savedBestScore = score;
+            saveBestScore(savedBestScore);
+        }
+        bestScore.setText("" + savedBestScore);
+    }
+    public void restart() {
+        finish();
+        overridePendingTransition(0, 0);
+        startActivity(getIntent());
+        overridePendingTransition(0, 0);
     }
 }

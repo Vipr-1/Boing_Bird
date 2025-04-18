@@ -1,6 +1,5 @@
 package com.gameproject;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Rect;
 import android.media.MediaPlayer;
@@ -15,11 +14,15 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import org.json.JSONObject;
+
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.util.Random;
 
 public class GameLogic extends AppCompatActivity {
 
-    private Bird bird;
+      private Bird bird;
     private Handler handler = new Handler();
     private final int FRAME_RATE = 30; // Refresh rate for game loop
     private int gravity = 1;  // Gravity effect
@@ -54,14 +57,13 @@ public class GameLogic extends AppCompatActivity {
     private int currentPipeSpeed;
     private int nextScoreThreshold = 10;
 
-    // Sound effect objects
+    // Sound effects
     private MediaPlayer jumpSFX;
     private MediaPlayer deathSFX;
 
     private boolean scoredFirstPipePair = false;
     private boolean scoredSecondPipePair = false;
 
-    // Flag for switching pipes
     private boolean pipesSwitched = false;
 
     private final int pipe_speed = base_pipe_speed;
@@ -72,7 +74,10 @@ public class GameLogic extends AppCompatActivity {
     private Pipe pipeNorthObj2;
     private Pipe pipeSouthObj2;
     private TextView scoreTextView;
-    ConstraintLayout gameLayout;
+    private ConstraintLayout gameLayout;
+
+    private static final String best_score_file = "best_score.json";
+    private static final String best_score_key = "bestScore";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,10 +85,8 @@ public class GameLogic extends AppCompatActivity {
         setContentView(R.layout.activity_game);
 
         gameLayout = findViewById(R.id.gameLayout);
-
         SharedPreferences preferences = getSharedPreferences("settings", MODE_PRIVATE);
         boolean isDark = preferences.getBoolean("dark_mode", false);
-
         if (isDark) {
             gameLayout.setBackgroundResource(R.drawable.bg_night);
         } else {
@@ -92,25 +95,18 @@ public class GameLogic extends AppCompatActivity {
 
         gameOver = findViewById(R.id.gameOverText);
         gameOver.setVisibility(View.INVISIBLE);
-
         scoreBoard = findViewById(R.id.resultBoard);
         scoreBoard.setVisibility(View.INVISIBLE);
-
         bestScore = findViewById(R.id.bestScore);
         bestScore.setVisibility(View.INVISIBLE);
-
         currentScore = findViewById(R.id.currentScore);
         currentScore.setVisibility(View.INVISIBLE);
-
         playAgain = findViewById(R.id.buttonPlayAgain);
         playAgain.setVisibility(View.INVISIBLE);
-
         backButton = findViewById(R.id.buttonBackYellow);
         backButton.setVisibility(View.INVISIBLE);
 
         backButton.setOnClickListener(v -> finish());
-
-
         playAgain.setOnClickListener(v -> restart());
 
         scoreTextView = findViewById(R.id.score);
@@ -125,14 +121,11 @@ public class GameLogic extends AppCompatActivity {
         RedPipeSouth = findViewById(R.id.RedSouth);
         RedPipeSouth2 = findViewById(R.id.RedSouth2);
 
-
         birdImage = findViewById(R.id.birdImage);
         bird = new Bird(birdImage);
-
         SharedPreferences birdPreferences = getSharedPreferences("settings", MODE_PRIVATE);
         int birdRes = birdPreferences.getInt("chosen_bird", R.drawable.bird_default);
         bird.setSkin(birdRes);
-
 
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
@@ -223,7 +216,7 @@ public class GameLogic extends AppCompatActivity {
         bird.birdY += bird.velocityY;
         birdImage.setY(bird.birdY);
 
-        if (hitFloor()|| checkForCollisions()) {
+        if (hitFloor() || checkForCollisions()) {
             bird.isDead = true;
             bird.velocityY = 0;
             deathSFX.start();
@@ -258,7 +251,6 @@ public class GameLogic extends AppCompatActivity {
 
         pipeSouthTwo.setVisibility(View.VISIBLE);
         pipeNorthTwo.setVisibility(View.VISIBLE);
-
     }
 
     private void updatePipes() {
@@ -288,9 +280,11 @@ public class GameLogic extends AppCompatActivity {
             scoredSecondPipePair = false;
         }
     }
+
     private void updateScoreDisplay() {
         scoreTextView.setText(String.valueOf(score));
     }
+
     private void checkScoreAndUpdate() {
         if (pipeNorthTwo.getVisibility() == View.VISIBLE &&
                 pipeNorthObj.getPipeX() + pipeNorthImage.getWidth() < bird.birdX && !scoredFirstPipePair) {
@@ -312,7 +306,6 @@ public class GameLogic extends AppCompatActivity {
         }
     }
 
-
     private void updatePipeSpeed() {
         if (score >= nextScoreThreshold) {
             currentPipeSpeed++;
@@ -325,54 +318,34 @@ public class GameLogic extends AppCompatActivity {
     }
 
     public void restart() {
-
-        gameOver.setVisibility(View.INVISIBLE);
-        scoreBoard.setVisibility(View.INVISIBLE);
-        backButton.setVisibility(View.INVISIBLE);
-        playAgain.setVisibility(View.INVISIBLE);
-        bestScore.setVisibility(View.INVISIBLE);
-        currentScore.setVisibility(View.INVISIBLE);
-
-        pipeSouthImage.setVisibility(View.INVISIBLE);
-        pipeNorthImage.setVisibility(View.INVISIBLE);
-        pipeSouthTwo.setVisibility(View.INVISIBLE);
-        pipeNorthTwo.setVisibility(View.INVISIBLE);
-        RedPipeNorth.setVisibility(View.INVISIBLE);
-        RedPipeNorth2.setVisibility(View.INVISIBLE);
-        RedPipeSouth.setVisibility(View.INVISIBLE);
-        RedPipeSouth2.setVisibility(View.INVISIBLE);
-
-        birdImage.setVisibility(View.VISIBLE);
-
-        score = 0;
-        currentPipeSpeed = base_pipe_speed;
-        nextScoreThreshold = 10;
-        scoredFirstPipePair = false;
-        scoredSecondPipePair = false;
-        pipesSwitched = false;
-
-        resetPipesPositions();
-
-        bird.birdX = 539;
-        bird.birdY = 1169;
-        bird.velocityY = 0;
-        bird.isDead = false;
-
-        scoreTextView.setText(String.valueOf(score));
-
-        randomizePipePair(pipeNorthObj, pipeSouthObj);
-        randomizePipePair(pipeNorthObj2, pipeSouthObj2);
-
-        gameStarted = true;
-        handler.postDelayed(gameLoop, FRAME_RATE);
+        finish();
+        overridePendingTransition(0, 0);
+        startActivity(getIntent());
+        overridePendingTransition(0, 0);
     }
 
-    private void resetPipesPositions() {
-        pipeNorthObj.setPipeX(-pipeNorthImage.getWidth());
-        pipeSouthObj.setPipeX(-pipeNorthImage.getWidth());
+    private void saveBestScore(int bestScoreVal) {
+        try {
+            JSONObject json = new JSONObject();
+            json.put(best_score_key, bestScoreVal);
+            try (FileOutputStream fos = openFileOutput(best_score_file, MODE_PRIVATE)) {
+                fos.write(json.toString().getBytes());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-        pipeNorthObj2.setPipeX(-pipeNorthTwo.getWidth() - (screenWidth / 2));
-        pipeSouthObj2.setPipeX(-pipeNorthTwo.getWidth() - (screenWidth / 2));
+    private int loadBestScore() {
+        try (FileInputStream fis = openFileInput(best_score_file)) {
+            byte[] data = new byte[fis.available()];
+            fis.read(data);
+            JSONObject json = new JSONObject(new String(data));
+            return json.optInt(best_score_key, 0);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
     }
 
     public void GameOver() {
@@ -383,7 +356,14 @@ public class GameLogic extends AppCompatActivity {
         bestScore.setVisibility(View.VISIBLE);
         currentScore.setVisibility(View.VISIBLE);
 
-        currentScore.setText(""+ score);
+        currentScore.setText("" + score);
+
+        int savedBestScore = loadBestScore();
+        if (score > savedBestScore) {
+            savedBestScore = score;
+            saveBestScore(savedBestScore);
+        }
+        bestScore.setText("" + savedBestScore);
 
         pipeSouthImage.setVisibility(View.INVISIBLE);
         pipeNorthImage.setVisibility(View.INVISIBLE);
@@ -422,14 +402,5 @@ public class GameLogic extends AppCompatActivity {
                 Rect.intersects(birdRect, pipeNorthRect2) ||
                 Rect.intersects(birdRect, pipeSouthRect2);
     }
-
-    public void checkCoins() {
-    }
-
-    public int bestScore() {
-        return score;
-    }
-
-
 
 }

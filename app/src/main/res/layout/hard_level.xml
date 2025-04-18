@@ -78,5 +78,110 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0" />
 
+    <TextView
+        android:id="@+id/gameOverText"
+        android:layout_width="341dp"
+        android:layout_height="143dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="221dp"
+        android:layout_marginEnd="30dp"
+        android:ellipsize="none"
+        android:fontFamily="@font/pixelmix_bold"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:text="GAME OVER"
+        android:textColor="@color/black"
+        android:textSize="50sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.001" />
+
+    <ImageView
+        android:id="@+id/resultBoard"
+        android:layout_width="362dp"
+        android:layout_height="225dp"
+        android:layout_marginStart="22dp"
+        android:layout_marginTop="324dp"
+        android:layout_marginEnd="22dp"
+        android:scaleType="fitXY"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.4"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/image_score" />
+
+
+    <TextView
+        android:id="@+id/currentScore"
+        android:layout_width="118dp"
+        android:layout_height="66dp"
+        android:layout_marginStart="59dp"
+        android:layout_marginTop="437dp"
+        android:fontFamily="@font/pixelmix_bold"
+        android:text="0"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:textSize="38sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.008"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/bestScore"
+        android:layout_width="118dp"
+        android:layout_height="66dp"
+        android:layout_marginStart="220dp"
+        android:layout_marginTop="437dp"
+        android:fontFamily="@font/pixelmix_bold"
+        android:text="0"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:textSize="38sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.041"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+
+    <ImageButton
+        android:id="@+id/buttonPlayAgain"
+        android:layout_width="225dp"
+        android:layout_height="91dp"
+        android:layout_marginStart="93dp"
+        android:layout_marginTop="612dp"
+        android:layout_marginEnd="93dp"
+        android:background="#00FFFFFF"
+        android:clickable="true"
+        android:cropToPadding="true"
+        android:scaleType="fitXY"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/button_play_again" />
+
+
+    <ImageButton
+        android:id="@+id/buttonBackYellow"
+        android:layout_width="228dp"
+        android:layout_height="89dp"
+        android:layout_marginStart="93dp"
+        android:layout_marginTop="720dp"
+        android:background="#00FFFFFF"
+        android:clickable="true"
+        android:cropToPadding="true"
+        android:scaleType="fitXY"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/button_back_yellow" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
