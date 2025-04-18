@@ -32,7 +32,7 @@ android {
 }
 
 dependencies {
-
+    implementation("pl.droidsonroids.gif:android-gif-drawable:1.2.29")
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
