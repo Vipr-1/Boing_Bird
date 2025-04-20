@@ -28,6 +28,9 @@
         <activity android:name=".HowToPlay"></activity>
         <activity android:name=".Skins"></activity>
         <activity android:name=".HardLevel"></activity>
+        <activity android:name=".Settings"></activity>
+
+
 
     </application>
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />

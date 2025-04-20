@@ -1,126 +1,80 @@
 package com.gameproject;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ImageButton;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import android.widget.Button;
-import android.view.View;
-import android.content.Intent;
-import android.widget.ImageButton;
-
-import android.media.MediaPlayer;
-import android.widget.ToggleButton;
-
-import android.widget.Switch;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import android.content.SharedPreferences;
-
-
-
 
 public class MainActivity extends AppCompatActivity {
-
-    //Music player and toggle
-    MediaPlayer mediaPlayer;
-    ToggleButton muteToggle;
-
-    Switch darkModeSwitch;
-    ConstraintLayout mainLayout;
-    SharedPreferences preferences;
-
+    private MediaPlayer mediaPlayer;
+    private SharedPreferences preferences;
+    private ConstraintLayout mainLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
 
-        ImageButton playClassicButton = findViewById(R.id.imagePlay);
-        playClassicButton.setOnClickListener(v -> mainGame());
+        ViewCompat.setOnApplyWindowInsetsListener(
+                findViewById(R.id.main),
+                (v, insets) -> {
+                    Insets sb = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+                    v.setPadding(sb.left, sb.top, sb.right, sb.bottom);
+                    return insets;
+                }
+        );
 
-        ImageButton skinsButton = findViewById(R.id.imageSkins);
-        skinsButton.setOnClickListener(v -> skinScreen());
+        // Nav buttons
+        findViewById(R.id.imagePlay).setOnClickListener(v -> startActivity(new Intent(this, GameLogic.class)));
+        findViewById(R.id.imageSkins).setOnClickListener(v -> startActivity(new Intent(this, Skins.class)));
+        findViewById(R.id.buttonHardLevel).setOnClickListener(v -> startActivity(new Intent(this, HardLevel.class)));
+        findViewById(R.id.image3).setOnClickListener(v -> startActivity(new Intent(this, HowToPlay.class)));
+        findViewById(R.id.buttonSettings).setOnClickListener(v -> startActivity(new Intent(this, Settings.class)));
 
-        // clicking the How To Play Button
-        ImageButton howToPlayButton = findViewById(R.id.image3);
-        howToPlayButton.setOnClickListener(v -> openHowToPlay());
-
-        // clicking the Hard Level Button
-        ImageButton hardLevelButton = findViewById(R.id.buttonHardLevel);
-        hardLevelButton.setOnClickListener(v -> openHardLevel());
-
-        //music toggle button setup
-        mediaPlayer = MediaPlayer.create(this, R.raw.music_q);
-        mediaPlayer.setLooping(true);
-        mediaPlayer.start();
-
-        muteToggle = findViewById(R.id.Mute);
-        muteToggle.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (isChecked) {
-                mediaPlayer.pause();
-            } else {
-                mediaPlayer.start();
-            }
-        });
-
-        mainLayout = findViewById(R.id.main);
-        darkModeSwitch = findViewById(R.id.switch1);
+        // Preference
         preferences = getSharedPreferences("settings", MODE_PRIVATE);
 
-        // Restore saved mode
+        // Background (Dark Mode)
+        mainLayout = findViewById(R.id.main);
+        applyDarkMode();
+
+        // Music (respect mute)
+        mediaPlayer = MediaPlayer.create(this, R.raw.music_q);
+        mediaPlayer.setLooping(true);
+        if (!preferences.getBoolean("isMuted", false)) {
+            mediaPlayer.start();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        applyDarkMode();
+        boolean muted = preferences.getBoolean("isMuted", false);
+        if (muted) {
+            if (mediaPlayer.isPlaying()) mediaPlayer.pause();
+        } else {
+            if (!mediaPlayer.isPlaying()) mediaPlayer.start();
+        }
+    }
+
+    private void applyDarkMode() {
         boolean isDark = preferences.getBoolean("dark_mode", false);
-        mainLayout.setBackgroundResource(isDark ? R.drawable.bg_main_dark : R.drawable.bg_main_light);
-        darkModeSwitch.setChecked(isDark);
-
-        // Toggle background on switch
-        darkModeSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            SharedPreferences.Editor editor = preferences.edit();
-            editor.putBoolean("dark_mode", isChecked);
-            editor.apply();
-
-            if (isChecked) {
-                mainLayout.setBackgroundResource(R.drawable.bg_main_dark); // dark bg
-                //NOTE: create a night version of bg_main_home image
-            } else {
-                mainLayout.setBackgroundResource(R.drawable.bg_main_light); // light bg
-            }
-        });
-
-
-    }
-    /**
-    Initialize the game
-     */
-    protected void mainGame(){
-        Intent intent = new Intent(MainActivity.this, GameLogic.class);
-        startActivity(intent);
+        mainLayout.setBackgroundResource(isDark
+                ? R.drawable.bg_main_dark
+                : R.drawable.bg_main_light);
     }
 
-    protected void skinScreen(){
-        Intent intent = new Intent(MainActivity.this, Skins.class);
-        startActivity(intent);
-    }
-
-    // Opens the How to Play screen
-    protected void openHowToPlay() {
-        Intent intent = new Intent(MainActivity.this, HowToPlay.class);
-        startActivity(intent);
-    }
-    protected void openHardLevel() {
-        Intent intent = new Intent(MainActivity.this, HardLevel.class);
-        startActivity(intent);
-    }
-
-    //Stop the music properly when leaving the activity
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -129,5 +83,4 @@ public class MainActivity extends AppCompatActivity {
             mediaPlayer = null;
         }
     }
-
 }
