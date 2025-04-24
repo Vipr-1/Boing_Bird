@@ -2,6 +2,7 @@ package com.gameproject;
 
 import android.content.SharedPreferences;
 import android.media.Image;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.Pair;
 import android.view.View;
@@ -32,7 +33,10 @@ public class Skins extends AppCompatActivity{
     public ImageButton buttonEquipped;
     public ImageButton buttonEquip;
     public String[] birdNames;
+    private MediaPlayer buttonSFX; //click sound
     public int birdChosen;
+
+    private boolean isMuted;
 
     private ImageView bgImage; //for the background change
 
@@ -65,12 +69,16 @@ public class Skins extends AppCompatActivity{
         buttonLeft = findViewById(R.id.arrowLeft);
         buttonRight = findViewById(R.id.arrowRight);
 
+        //init sound effect
+        buttonSFX = MediaPlayer.create(getApplicationContext(), R.raw.click_sfx);
+
 
         // if you press the right button you increase the counter and divide it by the lenght to restart it o 0
         buttonRight.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 CURRENT_BIRD_INDEX = (CURRENT_BIRD_INDEX + 1) % birdNames.length;
+                playSFX(buttonSFX);
                 updateBirdSkin();
             }
         });
@@ -79,6 +87,7 @@ public class Skins extends AppCompatActivity{
             @Override
             public void onClick(View v) {
                 CURRENT_BIRD_INDEX = (CURRENT_BIRD_INDEX - 1 + birdNames.length) % birdNames.length;
+                playSFX(buttonSFX);
                 updateBirdSkin();
 
             }
@@ -96,6 +105,7 @@ public class Skins extends AppCompatActivity{
         // Load dark mode state
         SharedPreferences preferences = getSharedPreferences("settings", MODE_PRIVATE);
         boolean isDark = preferences.getBoolean("dark_mode", false);
+        isMuted = preferences.getBoolean("isMuted", false);
 
         // Change background image
         if (isDark) {
@@ -105,6 +115,18 @@ public class Skins extends AppCompatActivity{
         }
 
 
+    }
+    private void playSFX(MediaPlayer SFX){
+        //check for if the sound file is running and override it
+        //to keep playback smooth
+        if (SFX.isPlaying()){
+            SFX.seekTo(0);
+            SFX.start();
+        }
+        //won't play if muted
+        else if (!isMuted) {
+            SFX.start();
+        }
     }
 
     private void equipSkin(){
@@ -128,6 +150,7 @@ public class Skins extends AppCompatActivity{
             // when button equip is clicked button equip is invisible and equipped is visible
             buttonEquip.setVisibility(View.INVISIBLE);
             buttonEquip.setEnabled(false);
+            playSFX(buttonSFX);
 
             buttonEquipped.setVisibility(View.VISIBLE);
             buttonEquipped.setEnabled(true);

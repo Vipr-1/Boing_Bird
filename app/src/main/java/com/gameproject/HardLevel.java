@@ -37,6 +37,8 @@ public class HardLevel extends AppCompatActivity {
     private ImageView pipeNorthTwo;
     private ImageView pipeSouthTwo;
 
+    private boolean isMuted;
+
     private Random random = new Random();
 
     private Pipe pipeNorthObj;
@@ -69,6 +71,9 @@ public class HardLevel extends AppCompatActivity {
     private static final String best_score_file = "best_score_hardlevel.json";
     private static final String best_score_key = "bestScore";
 
+    private static final String odometer_file = "odometer.json";
+    private static final String odometer_key = "odometer";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,6 +82,7 @@ public class HardLevel extends AppCompatActivity {
         gameLayout = findViewById(R.id.gameLayout);
         SharedPreferences preferences = getSharedPreferences("settings", MODE_PRIVATE);
         boolean isDark = preferences.getBoolean("dark_mode", false);
+        isMuted = preferences.getBoolean("isMuted", false);
         gameLayout.setBackgroundResource(isDark ? R.drawable.bg_night : R.drawable.bg_day);
 
         scoreTextView = findViewById(R.id.textView);
@@ -142,7 +148,7 @@ public class HardLevel extends AppCompatActivity {
                     handler.postDelayed(gameLoop, FRAME_RATE);
                 } else if (!bird.isDead) {
                     bird.jump();
-                    jumpSFX.start();
+                    playSFX(jumpSFX); //play boing sound
                 }
             }
         });
@@ -190,7 +196,7 @@ public class HardLevel extends AppCompatActivity {
         if (hitFloor() || checkForCollisions()) {
             bird.isDead = true;
             bird.velocityY = 0;
-            deathSFX.start();
+            playSFX(deathSFX);
             GameOver();
             return;
         }
@@ -300,6 +306,7 @@ public class HardLevel extends AppCompatActivity {
         }
     }
 
+
     private int loadBestScore() {
         try (FileInputStream fis = openFileInput(best_score_file)) {
             byte[] data = new byte[fis.available()];
@@ -309,6 +316,37 @@ public class HardLevel extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
             return 0;
+        }
+    }
+
+    private void updateOdometer(){
+        int currentDistance = loadOdometer();
+        currentDistance += score;
+        saveOdometer(currentDistance);
+
+    }
+
+    private int loadOdometer(){
+        try (FileInputStream fis = openFileInput(odometer_file)) {
+            byte[] data = new byte[fis.available()];
+            fis.read(data);
+            JSONObject json = new JSONObject(new String(data));
+            return json.optInt(odometer_key, 0);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
+    private void saveOdometer(int distance) {
+        try {
+            JSONObject json = new JSONObject();
+            json.put(odometer_key, distance);
+            try (FileOutputStream fos = openFileOutput(odometer_file, MODE_PRIVATE)) {
+                fos.write(json.toString().getBytes());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -334,6 +372,7 @@ public class HardLevel extends AppCompatActivity {
             savedBestScore = score;
             saveBestScore(savedBestScore);
         }
+        updateOdometer();
         bestScore.setText("" + savedBestScore);
     }
     public void restart() {
@@ -341,5 +380,17 @@ public class HardLevel extends AppCompatActivity {
         overridePendingTransition(0, 0);
         startActivity(getIntent());
         overridePendingTransition(0, 0);
+    }
+    public void playSFX(MediaPlayer SFX){
+        //check for if the sound file is running and override it
+        //to keep playback smooth
+        if (SFX.isPlaying()){
+            SFX.seekTo(0);
+            SFX.start();
+        }
+        //won't play if mute is set
+        else if (!isMuted) {
+            SFX.start();
+        }
     }
 }

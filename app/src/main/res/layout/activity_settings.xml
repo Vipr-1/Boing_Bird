@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/settingsLayout"
@@ -11,21 +10,21 @@
         android:id="@+id/buttonBack"
         android:layout_width="226dp"
         android:layout_height="89dp"
-        android:layout_marginStart="92dp"
-        android:layout_marginTop="104dp"
+        android:layout_marginStart="97dp"
+        android:layout_marginBottom="16dp"
         android:background="#00FFFFFF"
         android:clickable="true"
         android:scaleType="fitXY"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toggleMute"
         app:srcCompat="@drawable/button_back2" />
 
     <Switch
         android:id="@+id/switchDark"
         android:layout_width="226dp"
         android:layout_height="89dp"
-        android:layout_marginStart="92dp"
-        android:layout_marginTop="308dp"
+        android:layout_marginStart="96dp"
+        android:layout_marginTop="412dp"
         android:scaleType="fitXY"
         android:text="Dark Mode"
         app:layout_constraintStart_toStartOf="parent"
@@ -35,10 +34,30 @@
         android:id="@+id/toggleMute"
         android:layout_width="226dp"
         android:layout_height="89dp"
-        android:layout_marginStart="92dp"
-        android:layout_marginTop="48dp"
+        android:layout_marginStart="97dp"
+        android:layout_marginBottom="125dp"
         android:textOff="Unmute"
         android:textOn="Mute"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/odometerField"
+        android:layout_width="98dp"
+        android:layout_height="95dp"
+        android:layout_marginStart="96dp"
+        android:layout_marginTop="296dp"
+        android:text="Total Distance: X"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/switchDark" />
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/bestScoreField"
+        android:layout_width="77dp"
+        android:layout_height="99dp"
+        android:layout_marginTop="296dp"
+        android:layout_marginEnd="80dp"
+        android:text="Best Score: X"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -79,6 +79,8 @@ public class GameLogic extends AppCompatActivity {
 
     private static final String best_score_file = "best_score.json";
     private static final String best_score_key = "bestScore";
+    private static final String odometer_file = "odometer.json";
+    private static final String odometer_key = "odometer";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -166,7 +168,7 @@ public class GameLogic extends AppCompatActivity {
                 handler.postDelayed(gameLoop, FRAME_RATE);
             } else if (!bird.isDead) {
                 bird.jump();
-                if (!isMuted) jumpSFX.start();   // ← guard jump SFX
+                playSFX(jumpSFX);   // ← guard jump SFX
             }
         });
     }
@@ -231,13 +233,26 @@ public class GameLogic extends AppCompatActivity {
         if (hitFloor() || checkForCollisions()) {
             bird.isDead = true;
             bird.velocityY = 0;
-            if (!isMuted) deathSFX.start();   // ← guard death SFX
+            playSFX(deathSFX);   // play game over sound
             GameOver();
             return;
         }
 
         updatePipes();
         checkScoreAndUpdate();
+    }
+
+    public void playSFX(MediaPlayer SFX){
+        //check for if the sound file is running and override it
+        //to keep playback smooth
+        if (SFX.isPlaying()){
+            SFX.seekTo(0);
+            SFX.start();
+        }
+        //won't play if mute is set
+        else if (!isMuted) {
+            SFX.start();
+        }
     }
 
     private void switchToRedPipes() {
@@ -376,6 +391,7 @@ public class GameLogic extends AppCompatActivity {
             savedBest = score;
             saveBestScore(savedBest);
         }
+        updateOdometer();
         bestScore.setText("" + savedBest);
 
         // hide everything
@@ -392,6 +408,37 @@ public class GameLogic extends AppCompatActivity {
 
     public boolean hitFloor() {
         return bird.birdY >= 2338.875;
+    }
+
+    private void updateOdometer(){
+        int currentDistance = loadOdometer();
+        currentDistance += score;
+        saveOdometer(currentDistance);
+
+    }
+
+    private int loadOdometer(){
+        try (FileInputStream fis = openFileInput(odometer_file)) {
+            byte[] data = new byte[fis.available()];
+            fis.read(data);
+            JSONObject json = new JSONObject(new String(data));
+            return json.optInt(odometer_key, 0);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
+    private void saveOdometer(int distance) {
+        try {
+            JSONObject json = new JSONObject();
+            json.put(odometer_key, distance);
+            try (FileOutputStream fos = openFileOutput(odometer_file, MODE_PRIVATE)) {
+                fos.write(json.toString().getBytes());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public boolean checkForCollisions() {
