@@ -3,29 +3,25 @@ package com.gameproject;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageButton;
-import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.ToggleButton;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
-import org.json.JSONObject;
-
-import java.io.FileInputStream;
-
 public class Settings extends AppCompatActivity {
-    private ToggleButton muteToggle;
-    private Switch darkModeSwitch;
     private ConstraintLayout layout;
     private SharedPreferences prefs;
     private MediaPlayer mediaPlayer;
-
-    private static final String best_score_file = "best_score.json";
-    private static final String best_score_key = "bestScore";
-    private static final String odometer_file = "odometer.json";
-    private static final String odometer_key = "odometer";
+    private ImageButton sunButton;
+    private ImageButton moonButton;
+    private ImageButton musicOnButton;
+    private ImageButton musicOffButton;
+    private TextView modeLabel;
+    private boolean isDarkMode;
+    private boolean isMusicMuted;
+    private ImageButton btnGameOn, btnGameOff;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,78 +31,124 @@ public class Settings extends AppCompatActivity {
         prefs = getSharedPreferences("settings", MODE_PRIVATE);
         layout = findViewById(R.id.settingsLayout);
 
-        // Back button
         findViewById(R.id.buttonBack).setOnClickListener(v -> finish());
 
-        TextView bestScoreField = findViewById(R.id.bestScoreField);
-        String bestScoreString = "Best Score: " + loadBestScore();
-        bestScoreField.setText(bestScoreString);
+        sunButton = findViewById(R.id.sunButton);
+        moonButton = findViewById(R.id.moonButton);
+        modeLabel = findViewById(R.id.modeText);
 
-        TextView odometerField = findViewById(R.id.odometerField);
-        String odometerString = "Total Distance: " + loadOdometer();
-        odometerField.setText(odometerString);
+        isDarkMode = prefs.getBoolean("dark_mode", false);
+        applyDark(isDarkMode);
 
-        // Dark mode
-        darkModeSwitch = findViewById(R.id.switchDark);
-        boolean isDark = prefs.getBoolean("dark_mode", false);
-        darkModeSwitch.setChecked(isDark);
-        applyDark(isDark);
-        darkModeSwitch.setOnCheckedChangeListener((btn, on) -> {
-            prefs.edit().putBoolean("dark_mode", on).apply();
-            applyDark(on);
+        sunButton.setOnClickListener(v -> {
+            isDarkMode = true;
+            prefs.edit().putBoolean("dark_mode", true).apply();
+            applyDark(true);
         });
 
-        // Music
+        moonButton.setOnClickListener(v -> {
+            isDarkMode = false;
+            prefs.edit().putBoolean("dark_mode", false).apply();
+            applyDark(false);
+        });
+
+        // Music setup
         mediaPlayer = MediaPlayer.create(this, R.raw.music_q);
         mediaPlayer.setLooping(true);
-        muteToggle = findViewById(R.id.toggleMute);
-        boolean isMuted = prefs.getBoolean("isMuted", false);
-        muteToggle.setChecked(isMuted);
-        if (!isMuted) mediaPlayer.start();
 
-        muteToggle.setOnCheckedChangeListener((btn, muted) -> {
-            prefs.edit().putBoolean("isMuted", muted).apply();
-            if (muted) mediaPlayer.pause();
-            else mediaPlayer.start();
+        isMusicMuted = prefs.getBoolean("isMusicMuted", false);
+        if (!isMusicMuted) {
+            mediaPlayer.start();
+        }
+
+        musicOnButton = findViewById(R.id.buttonBgMusic);
+        musicOffButton = findViewById(R.id.buttonBgNoMusic);
+        updateMusicButtons(isMusicMuted);
+
+        musicOnButton.setOnClickListener(v -> {
+            isMusicMuted = true;
+            prefs.edit().putBoolean("isMusicMuted", true).apply();
+            if (mediaPlayer.isPlaying()) mediaPlayer.pause();
+            updateMusicButtons(true);
         });
+
+        musicOffButton.setOnClickListener(v -> {
+            isMusicMuted = false;
+            prefs.edit().putBoolean("isMusicMuted", false).apply();
+            if (!mediaPlayer.isPlaying()) mediaPlayer.start();
+            updateMusicButtons(false);
+        });
+
+
+
+        btnGameOn  = findViewById(R.id.buttonGameSound);
+        btnGameOff = findViewById(R.id.buttonGameNoSound);
+
+        // Sync UI with stored value
+        boolean sfxOn = prefs.getBoolean("game_sound", true);
+        flipButtons(sfxOn);
+
+        btnGameOn.setOnClickListener(v -> setGameSound(false));   // turn OFF
+        btnGameOff.setOnClickListener(v -> setGameSound(true));   // turn ON
+    }
+
+    private void setGameSound(boolean enabled) {
+        prefs.edit().putBoolean("game_sound", enabled).apply();
+        flipButtons(enabled);
+    }
+
+    private void flipButtons(boolean sfxOn) {
+        btnGameOn.setVisibility(sfxOn ? View.VISIBLE : View.INVISIBLE);
+        btnGameOff.setVisibility(sfxOn ? View.INVISIBLE : View.VISIBLE);
+    }
+
+    private void updateMusicButtons(boolean isMuted) {
+        musicOnButton.setVisibility(isMuted ? View.GONE : View.VISIBLE);
+        musicOffButton.setVisibility(isMuted ? View.VISIBLE : View.GONE);
     }
 
     private void applyDark(boolean dark) {
         layout.setBackgroundResource(dark
-                ? R.drawable.bg_main_dark
-                : R.drawable.bg_main_light);
+                ? R.drawable.setting_dark
+                : R.drawable.setting_light);
+
+        sunButton.setVisibility(dark ? View.GONE : View.VISIBLE);
+        moonButton.setVisibility(dark ? View.VISIBLE : View.GONE);
+        modeLabel.setText(dark ? "DARK MODE" : "LIGHT MODE");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        prefs.edit()
+                .putBoolean("dark_mode", isDarkMode)
+                .putBoolean("isMusicMuted", isMusicMuted)
+                .apply();
+
+        if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+            mediaPlayer.pause();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (mediaPlayer != null && !isMusicMuted && !mediaPlayer.isPlaying()) {
+            mediaPlayer.start();
+        }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        prefs.edit()
+                .putBoolean("dark_mode", isDarkMode)
+                .putBoolean("isMusicMuted", isMusicMuted)
+                .apply();
+
         if (mediaPlayer != null) {
             mediaPlayer.release();
             mediaPlayer = null;
-        }
-    }
-
-    private int loadOdometer(){
-        try (FileInputStream fis = openFileInput(odometer_file)) {
-            byte[] data = new byte[fis.available()];
-            fis.read(data);
-            JSONObject json = new JSONObject(new String(data));
-            return json.optInt(odometer_key, 0);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return 0;
-        }
-    }
-
-    private int loadBestScore() {
-        try (FileInputStream fis = openFileInput(best_score_file)) {
-            byte[] data = new byte[fis.available()];
-            fis.read(data);
-            JSONObject json = new JSONObject(new String(data));
-            return json.optInt(best_score_key, 0);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return 0;
         }
     }
 }

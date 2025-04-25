@@ -21,8 +21,8 @@ import java.io.FileOutputStream;
 import java.util.Random;
 
 public class HardLevel extends AppCompatActivity {
-
     private Bird bird;
+    private SharedPreferences preferences;
     private Handler handler = new Handler();
     private final int FRAME_RATE = 30;
     private int gravity = 1;
@@ -73,16 +73,28 @@ public class HardLevel extends AppCompatActivity {
 
     private static final String odometer_file = "odometer.json";
     private static final String odometer_key = "odometer";
+    private MediaPlayer bgPlayer;
+    private boolean isMusicMuted;
+    private boolean sfxOn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.hard_level);
+        preferences = getSharedPreferences("settings", MODE_PRIVATE);
+
+
 
         gameLayout = findViewById(R.id.gameLayout);
-        SharedPreferences preferences = getSharedPreferences("settings", MODE_PRIVATE);
+
+        isMusicMuted = preferences.getBoolean("isMusicMuted", false);
+        sfxOn        = preferences.getBoolean("game_sound",  true);
         boolean isDark = preferences.getBoolean("dark_mode", false);
-        isMuted = preferences.getBoolean("isMuted", false);
+
+        bgPlayer = MediaPlayer.create(this, R.raw.music_q);
+        bgPlayer.setLooping(true);
+        if (!isMusicMuted) bgPlayer.start();
+
         gameLayout.setBackgroundResource(isDark ? R.drawable.bg_night : R.drawable.bg_day);
 
         scoreTextView = findViewById(R.id.textView);
@@ -381,16 +393,22 @@ public class HardLevel extends AppCompatActivity {
         startActivity(getIntent());
         overridePendingTransition(0, 0);
     }
-    public void playSFX(MediaPlayer SFX){
-        //check for if the sound file is running and override it
-        //to keep playback smooth
-        if (SFX.isPlaying()){
-            SFX.seekTo(0);
-            SFX.start();
+    public void playSFX(MediaPlayer sfx) {
+        if (!sfxOn) return;               // respect the toggle
+        if (sfx.isPlaying()) {
+            sfx.seekTo(0);
         }
-        //won't play if mute is set
-        else if (!isMuted) {
-            SFX.start();
+        sfx.start();
+    }
+
+    protected void onResume() {
+        super.onResume();
+        isMusicMuted = preferences.getBoolean("isMusicMuted", false);
+        sfxOn = preferences.getBoolean("game_sound", true);
+
+        if (bgPlayer != null) {
+            if (!isMusicMuted && !bgPlayer.isPlaying()) bgPlayer.start();
+            else if (isMusicMuted && bgPlayer.isPlaying()) bgPlayer.pause();
         }
     }
 }

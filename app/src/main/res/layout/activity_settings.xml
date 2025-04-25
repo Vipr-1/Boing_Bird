@@ -4,14 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/settingsLayout"
     android:layout_width="match_parent"
+    android:background="@drawable/setting_light"
     android:layout_height="match_parent">
+
 
     <ImageButton
         android:id="@+id/buttonBack"
         android:layout_width="226dp"
         android:layout_height="89dp"
-        android:layout_marginStart="97dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginStart="104dp"
+        android:layout_marginBottom="136dp"
         android:background="#00FFFFFF"
         android:clickable="true"
         android:scaleType="fitXY"
@@ -19,45 +21,187 @@
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@drawable/button_back2" />
 
-    <Switch
-        android:id="@+id/switchDark"
-        android:layout_width="226dp"
-        android:layout_height="89dp"
-        android:layout_marginStart="96dp"
-        android:layout_marginTop="412dp"
-        android:scaleType="fitXY"
-        android:text="Dark Mode"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
-    <ToggleButton
-        android:id="@+id/toggleMute"
-        android:layout_width="226dp"
-        android:layout_height="89dp"
-        android:layout_marginStart="97dp"
-        android:layout_marginBottom="125dp"
-        android:textOff="Unmute"
-        android:textOn="Mute"
+    <ImageButton
+        android:id="@+id/buttonBgMusic"
+        android:layout_width="99dp"
+        android:layout_height="94dp"
+        android:layout_marginStart="48dp"
+        android:layout_marginTop="400dp"
+        android:backgroundTint="#00FFFFFF"
+        android:scaleType="fitStart"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/button_music_yes" />
+
+    <ImageButton
+        android:id="@+id/buttonBgNoMusic"
+        android:layout_width="99dp"
+        android:layout_height="94dp"
+        android:layout_marginStart="48dp"
+        android:layout_marginTop="400dp"
+        android:backgroundTint="#00FFFFFF"
+        android:scaleType="fitStart"
+        android:visibility="invisible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/button_no_music" />
+
+    <ImageButton
+        android:id="@+id/sunButton"
+        android:layout_width="120dp"
+        android:layout_height="100dp"
+        android:layout_marginStart="42dp"
+        android:layout_marginTop="295dp"
+        android:backgroundTint="#00FFFFFF"
+        android:scaleType="fitStart"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/buton_sun" />
+
+    <ImageButton
+        android:id="@+id/moonButton"
+        android:layout_width="120dp"
+        android:layout_height="100dp"
+        android:layout_marginStart="42dp"
+        android:layout_marginTop="295dp"
+        android:backgroundTint="#00FFFFFF"
+        android:scaleType="fitStart"
+        android:visibility="invisible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/button_moon" />
+
+    <TextView
+        android:id="@+id/modeText"
+        android:layout_width="240dp"
+        android:layout_height="82dp"
+        android:layout_marginStart="155dp"
+        android:layout_marginTop="322dp"
+        android:ellipsize="none"
+        android:fontFamily="@font/pixelmix_bold"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:text="LIGHT MODE"
+        android:textColor="@color/black"
+        android:textSize="25sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <TextView
-        android:id="@+id/odometerField"
-        android:layout_width="98dp"
-        android:layout_height="95dp"
-        android:layout_marginStart="96dp"
-        android:layout_marginTop="296dp"
-        android:text="Total Distance: X"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/bestScoreField"
-        android:layout_width="77dp"
-        android:layout_height="99dp"
-        android:layout_marginTop="296dp"
-        android:layout_marginEnd="80dp"
-        android:text="Best Score: X"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/bgText"
+        android:layout_width="240dp"
+        android:layout_height="82dp"
+        android:layout_marginStart="155dp"
+        android:layout_marginTop="401dp"
+        android:ellipsize="none"
+        android:fontFamily="@font/pixelmix_bold"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:text="BACKGROUND "
+        android:textColor="@color/black"
+        android:textSize="25sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.025" />
+
+    <TextView
+        android:id="@+id/MusicText"
+        android:layout_width="240dp"
+        android:layout_height="82dp"
+        android:layout_marginStart="155dp"
+        android:layout_marginTop="438dp"
+        android:ellipsize="none"
+        android:fontFamily="@font/pixelmix_bold"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:text="MUSIC"
+        android:textColor="@color/black"
+        android:textSize="25sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.017" />
+
+    <TextView
+        android:id="@+id/musicText3"
+        android:layout_width="240dp"
+        android:layout_height="82dp"
+        android:layout_marginStart="155dp"
+        android:layout_marginTop="438dp"
+        android:ellipsize="none"
+        android:fontFamily="@font/pixelmix_bold"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:text="MUSIC"
+        android:textColor="@color/black"
+        android:textSize="25sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.299" />
+
+    <TextView
+        android:id="@+id/musicText"
+        android:layout_width="240dp"
+        android:layout_height="82dp"
+        android:layout_marginStart="155dp"
+        android:layout_marginTop="438dp"
+        android:ellipsize="none"
+        android:fontFamily="@font/pixelmix_bold"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:text="GAME SOUND"
+        android:textColor="@color/black"
+        android:textSize="25sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.22" />
+
+    <ImageButton
+        android:id="@+id/buttonGameSound"
+        android:layout_width="120dp"
+        android:layout_height="100dp"
+        android:layout_marginStart="48dp"
+        android:layout_marginTop="384dp"
+        android:backgroundTint="#00FFFFFF"
+        android:scaleType="fitStart"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.286"
+        app:srcCompat="@drawable/music_on_sound" />
+
+    <ImageButton
+        android:id="@+id/buttonGameNoSound"
+        android:layout_width="120dp"
+        android:layout_height="100dp"
+        android:layout_marginStart="48dp"
+        android:layout_marginTop="384dp"
+        android:backgroundTint="#00FFFFFF"
+        android:scaleType="fitStart"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.286"
+        app:srcCompat="@drawable/button_music_off" />
+
+
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

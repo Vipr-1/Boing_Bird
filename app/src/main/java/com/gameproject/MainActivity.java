@@ -4,8 +4,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.ImageButton;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,6 +16,7 @@ public class MainActivity extends AppCompatActivity {
     private MediaPlayer mediaPlayer;
     private SharedPreferences preferences;
     private ConstraintLayout mainLayout;
+    private boolean isMusicMuted;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,10 +47,13 @@ public class MainActivity extends AppCompatActivity {
         mainLayout = findViewById(R.id.main);
         applyDarkMode();
 
-        // Music (respect mute)
+        // Initialize mediaPlayer
         mediaPlayer = MediaPlayer.create(this, R.raw.music_q);
         mediaPlayer.setLooping(true);
-        if (!preferences.getBoolean("isMuted", false)) {
+
+        // Load music mute state
+        isMusicMuted = preferences.getBoolean("isMusicMuted", false);
+        if (!isMusicMuted) {
             mediaPlayer.start();
         }
     }
@@ -59,20 +61,23 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
+        isMusicMuted = preferences.getBoolean("isMusicMuted", false);
         applyDarkMode();
-        boolean muted = preferences.getBoolean("isMuted", false);
-        if (muted) {
-            if (mediaPlayer.isPlaying()) mediaPlayer.pause();
-        } else {
-            if (!mediaPlayer.isPlaying()) mediaPlayer.start();
+
+        if (!isMusicMuted && !mediaPlayer.isPlaying()) {
+            mediaPlayer.start();
+        } else if (isMusicMuted && mediaPlayer.isPlaying()) {
+            mediaPlayer.pause();
         }
     }
 
-    private void applyDarkMode() {
-        boolean isDark = preferences.getBoolean("dark_mode", false);
-        mainLayout.setBackgroundResource(isDark
-                ? R.drawable.bg_main_dark
-                : R.drawable.bg_main_light);
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+            mediaPlayer.pause(); // Pause music when leaving MainActivity
+        }
     }
 
     @Override
@@ -82,5 +87,12 @@ public class MainActivity extends AppCompatActivity {
             mediaPlayer.release();
             mediaPlayer = null;
         }
+    }
+
+    private void applyDarkMode() {
+        boolean isDark = preferences.getBoolean("dark_mode", false);
+        mainLayout.setBackgroundResource(isDark
+                ? R.drawable.final_bg_dark
+                : R.drawable.final_bg_light);
     }
 }

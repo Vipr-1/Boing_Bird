@@ -21,6 +21,8 @@ import java.io.FileOutputStream;
 import java.util.Random;
 
 public class GameLogic extends AppCompatActivity {
+    private MediaPlayer mediaPlayer;
+    private SharedPreferences preferences;
 
     private Bird bird;
     private Handler handler = new Handler();
@@ -29,73 +31,65 @@ public class GameLogic extends AppCompatActivity {
     private int score;
     private int coins;
     private ImageView birdImage;
-    private boolean isMuted;              // ← Mute flag
 
-    // Green pipe image views
     private ImageView pipeNorthImage;
     private ImageView pipeSouthImage;
     private ImageView pipeNorthTwo;
     private ImageView pipeSouthTwo;
 
-    // Red pipe image views
     private ImageView RedPipeNorth;
     private ImageView RedPipeNorth2;
     private ImageView RedPipeSouth;
     private ImageView RedPipeSouth2;
-
     private ImageView scoreBoard;
     private TextView gameOver;
     private TextView bestScore;
     private TextView currentScore;
-
     private ImageButton playAgain;
     private ImageButton backButton;
-
     private boolean gameStarted = false;
     private int screenWidth;
-
     private final int base_pipe_speed = 10;
     private int currentPipeSpeed;
     private int nextScoreThreshold = 10;
-
-    // Sound effects
     private MediaPlayer jumpSFX;
     private MediaPlayer deathSFX;
+    private boolean isMusicMuted;
 
     private boolean scoredFirstPipePair = false;
     private boolean scoredSecondPipePair = false;
-
     private boolean pipesSwitched = false;
-
     private final int pipe_speed = base_pipe_speed;
     private Random random = new Random();
-
     private Pipe pipeNorthObj;
     private Pipe pipeSouthObj;
     private Pipe pipeNorthObj2;
     private Pipe pipeSouthObj2;
     private TextView scoreTextView;
     private ConstraintLayout gameLayout;
-
     private static final String best_score_file = "best_score.json";
     private static final String best_score_key = "bestScore";
-    private static final String odometer_file = "odometer.json";
-    private static final String odometer_key = "odometer";
+
+    private boolean sfxOn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
+        preferences = getSharedPreferences("settings", MODE_PRIVATE);
 
-        // Grab preferences
-        SharedPreferences preferences = getSharedPreferences("settings", MODE_PRIVATE);
-        isMuted = preferences.getBoolean("isMuted", false);
+        isMusicMuted = preferences.getBoolean("isMusicMuted", false);
+
+        sfxOn = preferences.getBoolean("game_sound", true);
+
         boolean isDark = preferences.getBoolean("dark_mode", false);
 
         // Background
         gameLayout = findViewById(R.id.gameLayout);
         gameLayout.setBackgroundResource(isDark ? R.drawable.bg_night : R.drawable.bg_day);
 
+        mediaPlayer = MediaPlayer.create(this, R.raw.music_q);
+        mediaPlayer.setLooping(true);
         // UI setup
         gameOver     = findViewById(R.id.gameOverText);
         scoreBoard  = findViewById(R.id.resultBoard);
@@ -139,7 +133,6 @@ public class GameLogic extends AppCompatActivity {
         pipeNorthObj2 = new Pipe(pipeNorthTwo, pipe_speed);
         pipeSouthObj2 = new Pipe(pipeSouthTwo, pipe_speed);
 
-        // Hide all pipes initially
         pipeSouthImage.setVisibility(View.INVISIBLE);
         pipeNorthImage.setVisibility(View.INVISIBLE);
         pipeSouthTwo.setVisibility(View.INVISIBLE);
@@ -149,18 +142,15 @@ public class GameLogic extends AppCompatActivity {
         RedPipeSouth.setVisibility(View.INVISIBLE);
         RedPipeSouth2.setVisibility(View.INVISIBLE);
 
-        // Scores
         currentPipeSpeed   = base_pipe_speed;
         nextScoreThreshold = 10;
         scoredFirstPipePair  = false;
         scoredSecondPipePair = false;
         score = 0;
 
-        // SFX
         jumpSFX  = MediaPlayer.create(getApplicationContext(), R.raw.jumpfx);
         deathSFX = MediaPlayer.create(getApplicationContext(), R.raw.death);
 
-        // Tap to jump / start
         findViewById(android.R.id.content).setOnClickListener(v -> {
             if (!gameStarted) {
                 gameStarted = true;
@@ -168,17 +158,31 @@ public class GameLogic extends AppCompatActivity {
                 handler.postDelayed(gameLoop, FRAME_RATE);
             } else if (!bird.isDead) {
                 bird.jump();
-                playSFX(jumpSFX);   // ← guard jump SFX
+                playSFX(jumpSFX);
             }
         });
     }
-
-    @Override
     protected void onResume() {
         super.onResume();
-        // re‑read mute setting if user changed it in Settings
-        isMuted = getSharedPreferences("settings", MODE_PRIVATE)
-                .getBoolean("isMuted", false);
+
+        isMusicMuted = preferences.getBoolean("isMusicMuted", false);
+
+
+        sfxOn = preferences.getBoolean("game_sound", true);
+
+        if (!isMusicMuted && !mediaPlayer.isPlaying()) {
+            mediaPlayer.start();
+        } else if (isMusicMuted && mediaPlayer.isPlaying()) {
+            mediaPlayer.pause();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+            mediaPlayer.pause(); // Pause music when leaving MainActivity
+        }
     }
 
     public void startGame() {
@@ -195,7 +199,6 @@ public class GameLogic extends AppCompatActivity {
         pipesSwitched        = false;
         scoreTextView.setText(String.valueOf(score));
 
-        // Hide everything, then spawn new pipes
         pipeSouthImage.setVisibility(View.INVISIBLE);
         pipeNorthImage.setVisibility(View.INVISIBLE);
         pipeSouthTwo.setVisibility(View.INVISIBLE);
@@ -233,7 +236,7 @@ public class GameLogic extends AppCompatActivity {
         if (hitFloor() || checkForCollisions()) {
             bird.isDead = true;
             bird.velocityY = 0;
-            playSFX(deathSFX);   // play game over sound
+            playSFX(deathSFX);
             GameOver();
             return;
         }
@@ -242,17 +245,12 @@ public class GameLogic extends AppCompatActivity {
         checkScoreAndUpdate();
     }
 
-    public void playSFX(MediaPlayer SFX){
-        //check for if the sound file is running and override it
-        //to keep playback smooth
-        if (SFX.isPlaying()){
-            SFX.seekTo(0);
-            SFX.start();
+    public void playSFX(MediaPlayer sfx) {
+        if (!sfxOn) return;               // respect the toggle
+        if (sfx.isPlaying()) {
+            sfx.seekTo(0);
         }
-        //won't play if mute is set
-        else if (!isMuted) {
-            SFX.start();
-        }
+        sfx.start();
     }
 
     private void switchToRedPipes() {
@@ -391,7 +389,6 @@ public class GameLogic extends AppCompatActivity {
             savedBest = score;
             saveBestScore(savedBest);
         }
-        updateOdometer();
         bestScore.setText("" + savedBest);
 
         // hide everything
@@ -410,37 +407,6 @@ public class GameLogic extends AppCompatActivity {
         return bird.birdY >= 2338.875;
     }
 
-    private void updateOdometer(){
-        int currentDistance = loadOdometer();
-        currentDistance += score;
-        saveOdometer(currentDistance);
-
-    }
-
-    private int loadOdometer(){
-        try (FileInputStream fis = openFileInput(odometer_file)) {
-            byte[] data = new byte[fis.available()];
-            fis.read(data);
-            JSONObject json = new JSONObject(new String(data));
-            return json.optInt(odometer_key, 0);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return 0;
-        }
-    }
-
-    private void saveOdometer(int distance) {
-        try {
-            JSONObject json = new JSONObject();
-            json.put(odometer_key, distance);
-            try (FileOutputStream fos = openFileOutput(odometer_file, MODE_PRIVATE)) {
-                fos.write(json.toString().getBytes());
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     public boolean checkForCollisions() {
         Rect birdRect = new Rect();
         birdImage.getHitRect(birdRect);
@@ -455,4 +421,7 @@ public class GameLogic extends AppCompatActivity {
                 || Rect.intersects(birdRect,n2Rect)
                 || Rect.intersects(birdRect,s2Rect);
     }
+
+
+
 }

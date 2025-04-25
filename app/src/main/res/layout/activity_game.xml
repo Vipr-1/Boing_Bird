@@ -220,16 +220,5 @@
         app:srcCompat="@drawable/button_back_yellow" />
 
 
-    <pl.droidsonroids.gif.GifImageView
-        android:layout_width="39dp"
-        android:layout_height="78dp"
-        android:layout_marginStart="316dp"
-        android:layout_marginTop="484dp"
-        android:cropToPadding="true"
-        android:scaleType="fitXY"
-        android:src="@drawable/plant_red_gif"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
