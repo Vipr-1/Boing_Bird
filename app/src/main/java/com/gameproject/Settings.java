@@ -1,26 +1,23 @@
 package com.gameproject;
 
 import android.content.SharedPreferences;
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 public class Settings extends AppCompatActivity {
     private ConstraintLayout layout;
     private SharedPreferences prefs;
-    private MediaPlayer mediaPlayer;
-    private ImageButton sunButton;
-    private ImageButton moonButton;
-    private ImageButton musicOnButton;
-    private ImageButton musicOffButton;
+    private ImageButton sunButton, moonButton;
     private TextView modeLabel;
     private boolean isDarkMode;
+
+    private ImageButton musicOnButton, musicOffButton;
     private boolean isMusicMuted;
+
     private ImageButton btnGameOn, btnGameOff;
 
     @Override
@@ -33,11 +30,10 @@ public class Settings extends AppCompatActivity {
 
         findViewById(R.id.buttonBack).setOnClickListener(v -> finish());
 
-        sunButton = findViewById(R.id.sunButton);
-        moonButton = findViewById(R.id.moonButton);
-        modeLabel = findViewById(R.id.modeText);
-
-        isDarkMode = prefs.getBoolean("dark_mode", false);
+        sunButton   = findViewById(R.id.sunButton);
+        moonButton  = findViewById(R.id.moonButton);
+        modeLabel   = findViewById(R.id.modeText);
+        isDarkMode  = prefs.getBoolean("dark_mode", false);
         applyDark(isDarkMode);
 
         sunButton.setOnClickListener(v -> {
@@ -45,51 +41,39 @@ public class Settings extends AppCompatActivity {
             prefs.edit().putBoolean("dark_mode", true).apply();
             applyDark(true);
         });
-
         moonButton.setOnClickListener(v -> {
             isDarkMode = false;
             prefs.edit().putBoolean("dark_mode", false).apply();
             applyDark(false);
         });
 
-        // Music setup
-        mediaPlayer = MediaPlayer.create(this, R.raw.music_q);
-        mediaPlayer.setLooping(true);
-
-        isMusicMuted = prefs.getBoolean("isMusicMuted", false);
-        if (!isMusicMuted) {
-            mediaPlayer.start();
-        }
-
-        musicOnButton = findViewById(R.id.buttonBgMusic);
+        musicOnButton  = findViewById(R.id.buttonBgMusic);
         musicOffButton = findViewById(R.id.buttonBgNoMusic);
+        isMusicMuted   = prefs.getBoolean("isMusicMuted", false);
+
+        MusicManager.setMuted(isMusicMuted, this);
         updateMusicButtons(isMusicMuted);
 
         musicOnButton.setOnClickListener(v -> {
             isMusicMuted = true;
             prefs.edit().putBoolean("isMusicMuted", true).apply();
-            if (mediaPlayer.isPlaying()) mediaPlayer.pause();
+            MusicManager.setMuted(true, this);
             updateMusicButtons(true);
         });
-
         musicOffButton.setOnClickListener(v -> {
             isMusicMuted = false;
             prefs.edit().putBoolean("isMusicMuted", false).apply();
-            if (!mediaPlayer.isPlaying()) mediaPlayer.start();
+            MusicManager.setMuted(false, this);
             updateMusicButtons(false);
         });
 
-
-
         btnGameOn  = findViewById(R.id.buttonGameSound);
         btnGameOff = findViewById(R.id.buttonGameNoSound);
-
-        // Sync UI with stored value
         boolean sfxOn = prefs.getBoolean("game_sound", true);
         flipButtons(sfxOn);
 
-        btnGameOn.setOnClickListener(v -> setGameSound(false));   // turn OFF
-        btnGameOff.setOnClickListener(v -> setGameSound(true));   // turn ON
+        btnGameOn.setOnClickListener(v -> setGameSound(false));
+        btnGameOff.setOnClickListener(v -> setGameSound(true));
     }
 
     private void setGameSound(boolean enabled) {
@@ -98,57 +82,43 @@ public class Settings extends AppCompatActivity {
     }
 
     private void flipButtons(boolean sfxOn) {
-        btnGameOn.setVisibility(sfxOn ? View.VISIBLE : View.INVISIBLE);
-        btnGameOff.setVisibility(sfxOn ? View.INVISIBLE : View.VISIBLE);
+        if (sfxOn) {
+            btnGameOn.setVisibility(View.VISIBLE);
+            btnGameOff.setVisibility(View.INVISIBLE);
+        } else {
+            btnGameOn.setVisibility(View.INVISIBLE);
+            btnGameOff.setVisibility(View.VISIBLE);
+        }
     }
 
     private void updateMusicButtons(boolean isMuted) {
-        musicOnButton.setVisibility(isMuted ? View.GONE : View.VISIBLE);
-        musicOffButton.setVisibility(isMuted ? View.VISIBLE : View.GONE);
+        if (isMuted) {
+            musicOnButton.setVisibility(View.GONE);
+            musicOffButton.setVisibility(View.VISIBLE);
+        } else {
+            musicOnButton.setVisibility(View.VISIBLE);
+            musicOffButton.setVisibility(View.GONE);
+        }
     }
+
 
     private void applyDark(boolean dark) {
-        layout.setBackgroundResource(dark
-                ? R.drawable.setting_dark
-                : R.drawable.setting_light);
-
-        sunButton.setVisibility(dark ? View.GONE : View.VISIBLE);
-        moonButton.setVisibility(dark ? View.VISIBLE : View.GONE);
-        modeLabel.setText(dark ? "DARK MODE" : "LIGHT MODE");
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        prefs.edit()
-                .putBoolean("dark_mode", isDarkMode)
-                .putBoolean("isMusicMuted", isMusicMuted)
-                .apply();
-
-        if (mediaPlayer != null && mediaPlayer.isPlaying()) {
-            mediaPlayer.pause();
+        if (dark) {
+            layout.setBackgroundResource(R.drawable.setting_dark);
+            sunButton.setVisibility(View.GONE);
+            moonButton.setVisibility(View.VISIBLE);
+            modeLabel.setText("DARK MODE");
+        } else {
+            layout.setBackgroundResource(R.drawable.setting_light);
+            sunButton.setVisibility(View.VISIBLE);
+            moonButton.setVisibility(View.GONE);
+            modeLabel.setText("LIGHT MODE");
         }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (mediaPlayer != null && !isMusicMuted && !mediaPlayer.isPlaying()) {
-            mediaPlayer.start();
-        }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        prefs.edit()
-                .putBoolean("dark_mode", isDarkMode)
-                .putBoolean("isMusicMuted", isMusicMuted)
-                .apply();
-
-        if (mediaPlayer != null) {
-            mediaPlayer.release();
-            mediaPlayer = null;
-        }
+        MusicManager.setMuted(isMusicMuted, this);
     }
 }

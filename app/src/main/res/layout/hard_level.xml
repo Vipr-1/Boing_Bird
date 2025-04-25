@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/gameLayout"
@@ -47,6 +46,19 @@
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@drawable/pipe_red_south"
         tools:layout_editor_absoluteY="326dp" />
+
+    <pl.droidsonroids.gif.GifImageView
+        android:id="@+id/plantImage"
+        android:layout_width="52dp"
+        android:layout_height="89dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="124dp"
+        android:layout_marginTop="99dp"
+        android:layout_marginBottom="543dp"
+        android:src="@drawable/plant_red_gif"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/birdImage"

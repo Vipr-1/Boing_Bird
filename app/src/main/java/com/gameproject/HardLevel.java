@@ -20,101 +20,76 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.Random;
 
+import pl.droidsonroids.gif.GifImageView;
+
+
 public class HardLevel extends AppCompatActivity {
+
+    private static final int frame_rate = 30;
+    private static final int base_pipe_speed = 10;
+    private static final float plant_spawn_probability = 0.30f;
+
+    private static final String best_score_file = "best_score_hardlevel.json";
+    private static final String best_score_key  = "bestScore";
+
     private Bird bird;
-    private SharedPreferences preferences;
-    private Handler handler = new Handler();
-    private final int FRAME_RATE = 30;
+    private final Handler handler = new Handler();
     private int gravity = 1;
     private int score;
-
-    private int base_pipe_speed = 10;
     private int currentPipeSpeed;
-    private int nextScoreThreshold = 5;
-
-    private ImageView pipeNorthImage;
-    private ImageView pipeSouthImage;
-    private ImageView pipeNorthTwo;
-    private ImageView pipeSouthTwo;
-
+    private int nextScoreThreshold;
     private boolean isMuted;
-
-    private Random random = new Random();
-
-    private Pipe pipeNorthObj;
-    private Pipe pipeSouthObj;
-    private Pipe pipeNorthObj2;
-    private Pipe pipeSouthObj2;
-
-    private TextView scoreTextView;
-
-    private TextView gameOver;
-    private ImageView scoreBoard;
-    private TextView bestScore;
-    private TextView currentScore;
-    private ImageButton playAgain;
-    private ImageButton backButton;
-
-    private ConstraintLayout gameLayout;
-    private ImageView birdImage;
-
-    private MediaPlayer jumpSFX;
-    private MediaPlayer deathSFX;
-
     private int screenWidth;
 
     private boolean gameStarted = false;
     private boolean secondPipeShown = false;
     private boolean firstPipeScored = false;
     private boolean secondPipeScored = false;
+    private boolean plantActive = false;
+    private boolean plantCollisionHandled = false;
 
-    private static final String best_score_file = "best_score_hardlevel.json";
-    private static final String best_score_key = "bestScore";
+    private final Random random = new Random();
 
-    private static final String odometer_file = "odometer.json";
-    private static final String odometer_key = "odometer";
-    private MediaPlayer bgPlayer;
-    private boolean isMusicMuted;
-    private boolean sfxOn;
+    private ConstraintLayout gameLayout;
+    private ImageView birdImage;
+    private ImageView pipeNorthImage, pipeSouthImage, pipeNorthTwo, pipeSouthTwo;
+    private GifImageView plantGIF;
+    private TextView scoreTextView;
+    private TextView gameOver, bestScore, currentScore;
+    private ImageView scoreBoard;
+    private ImageButton playAgain, backButton;
+    private Pipe   pipeNorthObj, pipeSouthObj, pipeNorthObj2, pipeSouthObj2;
+    private Plant  plantObj;
+
+    private MediaPlayer jumpSFX, deathSFX;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.hard_level);
-        preferences = getSharedPreferences("settings", MODE_PRIVATE);
-
-
 
         gameLayout = findViewById(R.id.gameLayout);
-
-        isMusicMuted = preferences.getBoolean("isMusicMuted", false);
-        sfxOn        = preferences.getBoolean("game_sound",  true);
-        boolean isDark = preferences.getBoolean("dark_mode", false);
-
-        bgPlayer = MediaPlayer.create(this, R.raw.music_q);
-        bgPlayer.setLooping(true);
-        if (!isMusicMuted) bgPlayer.start();
-
+        SharedPreferences prefs = getSharedPreferences("settings", MODE_PRIVATE);
+        boolean isDark = prefs.getBoolean("dark_mode", false);
         gameLayout.setBackgroundResource(isDark ? R.drawable.bg_night : R.drawable.bg_day);
 
-        scoreTextView = findViewById(R.id.textView);
 
+        boolean bgMuted = prefs.getBoolean("isMusicMuted", false);
+        MusicManager.setMuted(bgMuted, this);
+        MusicManager.play(this);
+
+        boolean gameSfxOn = prefs.getBoolean("game_sound", true);
+        isMuted = !gameSfxOn;
+
+        scoreTextView = findViewById(R.id.textView);
         gameOver = findViewById(R.id.gameOverText);
         scoreBoard = findViewById(R.id.resultBoard);
         bestScore = findViewById(R.id.bestScore);
         currentScore = findViewById(R.id.currentScore);
         playAgain = findViewById(R.id.buttonPlayAgain);
         backButton = findViewById(R.id.buttonBackYellow);
+        hideResults();
 
-        // Set initial UI visibility to INVISIBLE
-        gameOver.setVisibility(View.INVISIBLE);
-        scoreBoard.setVisibility(View.INVISIBLE);
-        bestScore.setVisibility(View.INVISIBLE);
-        currentScore.setVisibility(View.INVISIBLE);
-        playAgain.setVisibility(View.INVISIBLE);
-        backButton.setVisibility(View.INVISIBLE);
-
-        // Button click listeners
         playAgain.setOnClickListener(v -> restart());
         backButton.setOnClickListener(v -> finish());
 
@@ -122,29 +97,24 @@ public class HardLevel extends AppCompatActivity {
         pipeSouthImage = findViewById(R.id.RedSouth);
         pipeNorthTwo = findViewById(R.id.RedNorth2);
         pipeSouthTwo = findViewById(R.id.RedSouth2);
+        plantGIF = findViewById(R.id.plantImage);
+        hideAllPipes();
 
-        pipeNorthImage.setVisibility(View.INVISIBLE);
-        pipeSouthImage.setVisibility(View.INVISIBLE);
-        pipeNorthTwo.setVisibility(View.INVISIBLE);
-        pipeSouthTwo.setVisibility(View.INVISIBLE);
-
-        // Bird setup
         birdImage = findViewById(R.id.birdImage);
         bird = new Bird(birdImage);
-        SharedPreferences birdPreferences = getSharedPreferences("settings", MODE_PRIVATE);
-        int birdRes = birdPreferences.getInt("chosen_bird", R.drawable.bird_default);
+        int birdRes = prefs.getInt("chosen_bird", R.drawable.bird_default);
         bird.setSkin(birdRes);
 
-        DisplayMetrics displayMetrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-        screenWidth = displayMetrics.widthPixels;
+        DisplayMetrics dm = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(dm);
+        screenWidth = dm.widthPixels;
 
-        pipeNorthObj = new Pipe(pipeNorthImage, base_pipe_speed);
-        pipeSouthObj = new Pipe(pipeSouthImage, base_pipe_speed);
+        pipeNorthObj  = new Pipe(pipeNorthImage, base_pipe_speed);
+        pipeSouthObj  = new Pipe(pipeSouthImage, base_pipe_speed);
         pipeNorthObj2 = new Pipe(pipeNorthTwo, base_pipe_speed);
         pipeSouthObj2 = new Pipe(pipeSouthTwo, base_pipe_speed);
+        plantObj = new Plant(plantGIF, base_pipe_speed);
 
-        // Set game state variables
         currentPipeSpeed = base_pipe_speed;
         score = 0;
         nextScoreThreshold = 5;
@@ -152,55 +122,59 @@ public class HardLevel extends AppCompatActivity {
         jumpSFX = MediaPlayer.create(getApplicationContext(), R.raw.jumpfx);
         deathSFX = MediaPlayer.create(getApplicationContext(), R.raw.death);
 
-        findViewById(android.R.id.content).setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                if (!gameStarted) {
-                    gameStarted = true;
-                    startGame();
-                    handler.postDelayed(gameLoop, FRAME_RATE);
-                } else if (!bird.isDead) {
-                    bird.jump();
-                    playSFX(jumpSFX); //play boing sound
-                }
+        findViewById(android.R.id.content).setOnClickListener(v -> {
+            if (!gameStarted) {
+                gameStarted = true;
+                startGame();
+                handler.postDelayed(gameLoop, frame_rate);
+            } else if (!bird.isDead) {
+                bird.jump();
+                playSFX(jumpSFX);
             }
         });
     }
 
-    public void startGame() {
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MusicManager.play(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MusicManager.pause();
+    }
+
+    private void startGame() {
         bird.birdX = screenWidth / 2;
         bird.birdY = 1169;
         bird.velocityY = 0;
         bird.isDead = false;
 
-        score = 0;
-        currentPipeSpeed = base_pipe_speed;
-        nextScoreThreshold = 5;
-        secondPipeShown = false;
-        firstPipeScored = false;
-        secondPipeScored = false;
+        score                 = 0;
+        currentPipeSpeed      = base_pipe_speed;
+        nextScoreThreshold    = 5;
 
-        // Randomize positions for both pipe pairs
+        secondPipeShown       = false;
+        firstPipeScored       = false;
+        secondPipeScored      = false;
+
         randomizePipePair(pipeNorthObj, pipeSouthObj);
         randomizePipePair(pipeNorthObj2, pipeSouthObj2);
+        attemptSpawnPlant();
     }
 
-    private Runnable gameLoop = new Runnable() {
-        @Override
-        public void run() {
+    private final Runnable gameLoop = new Runnable() {
+        @Override public void run() {
             if (!bird.isDead) {
                 update();
-                handler.postDelayed(this, FRAME_RATE);
+                handler.postDelayed(this, frame_rate);
             }
         }
     };
 
-    private void randomizePipePair(Pipe topPipe, Pipe bottomPipe) {
-        int offset = random.nextInt(251);
-        topPipe.setPipeY(-250 + offset);
-        bottomPipe.setPipeY(1250 + offset);
-    }
-
-    public void update() {
+    private void update() {
         bird.velocityY += gravity;
         bird.birdY += bird.velocityY;
         birdImage.setY(bird.birdY);
@@ -213,20 +187,49 @@ public class HardLevel extends AppCompatActivity {
             return;
         }
 
+        boolean birdHitsPlant = plantActive && checkForCollisionsPlant();
+        if (birdHitsPlant && !plantCollisionHandled) {
+            currentPipeSpeed++;
+            setAllPipeSpeeds(currentPipeSpeed);
+            plantCollisionHandled = true;
+        }
+        if (!birdHitsPlant) plantCollisionHandled = false;
+
         updatePipes();
         checkScoreAndUpdate();
     }
 
+    private void randomizePipePair(Pipe topPipe, Pipe bottomPipe) {
+        int offset = random.nextInt(251);
+        topPipe.setPipeY(-250 + offset);
+        bottomPipe.setPipeY(1250 + offset);
+    }
+
+    private void attemptSpawnPlant() {
+        if (random.nextFloat() < plant_spawn_probability) {
+            plantActive = true;
+        } else {
+            plantActive = false;
+            plantGIF.setVisibility(View.INVISIBLE);
+        }
+    }
+
     private void updatePipes() {
-        pipeSouthImage.setVisibility(View.VISIBLE);
         pipeNorthImage.setVisibility(View.VISIBLE);
+        pipeSouthImage.setVisibility(View.VISIBLE);
 
         pipeNorthObj.move(screenWidth);
         pipeSouthObj.move(screenWidth);
 
-        if (!secondPipeShown && pipeSouthObj.getPipeX() <= (screenWidth / 2)) {
-            pipeSouthTwo.setVisibility(View.VISIBLE);
+        if (plantActive) {
+            plantObj.setPlantX(pipeSouthObj.getPipeX() + 130);
+            plantObj.setPlantY(pipeSouthObj.getPipeY() - plantGIF.getHeight());
+            plantObj.move(screenWidth);
+            plantGIF.setVisibility(View.VISIBLE);
+        }
+        if (!secondPipeShown && pipeSouthObj.getPipeX() <= screenWidth/2) {
             pipeNorthTwo.setVisibility(View.VISIBLE);
+            pipeSouthTwo.setVisibility(View.VISIBLE);
             randomizePipePair(pipeNorthObj2, pipeSouthObj2);
             secondPipeShown = true;
         }
@@ -240,27 +243,38 @@ public class HardLevel extends AppCompatActivity {
             randomizePipePair(pipeNorthObj, pipeSouthObj);
             secondPipeShown = false;
             firstPipeScored = false;
+            attemptSpawnPlant();
         }
-        if (pipeSouthTwo.getVisibility() == View.VISIBLE && pipeSouthObj2.getPipeX() >= screenWidth) {
+
+        if (pipeSouthTwo.getVisibility() == View.VISIBLE &&
+                pipeSouthObj2.getPipeX() >= screenWidth) {
             randomizePipePair(pipeNorthObj2, pipeSouthObj2);
             secondPipeScored = false;
         }
     }
 
     private void checkScoreAndUpdate() {
-        if (!firstPipeScored && (pipeNorthObj.getPipeX() + pipeNorthImage.getWidth() < bird.birdX)) {
+        if (!firstPipeScored &&
+                pipeNorthObj.getPipeX() + pipeNorthImage.getWidth() < bird.birdX) {
             score++;
             firstPipeScored = true;
-            updatePipeSpeed();
-            updateScoreDisplay();
+            applyScoreSpeedBoost();
         }
-
         if (pipeSouthTwo.getVisibility() == View.VISIBLE &&
-                !secondPipeScored && (pipeNorthObj2.getPipeX() + pipeNorthTwo.getWidth() < bird.birdX)) {
+                !secondPipeScored &&
+                pipeNorthObj2.getPipeX() + pipeNorthTwo.getWidth() < bird.birdX) {
             score++;
             secondPipeScored = true;
-            updatePipeSpeed();
-            updateScoreDisplay();
+            applyScoreSpeedBoost();
+        }
+    }
+
+    private void applyScoreSpeedBoost() {
+        updateScoreDisplay();
+        if (score >= nextScoreThreshold) {
+            currentPipeSpeed += 3;
+            nextScoreThreshold += 5;
+            setAllPipeSpeeds(currentPipeSpeed);
         }
     }
 
@@ -268,15 +282,12 @@ public class HardLevel extends AppCompatActivity {
         scoreTextView.setText(String.valueOf(score));
     }
 
-    private void updatePipeSpeed() {
-        if (score >= nextScoreThreshold) {
-            currentPipeSpeed += 3;
-            nextScoreThreshold += 5;
-            pipeNorthObj.setSpeed(currentPipeSpeed);
-            pipeSouthObj.setSpeed(currentPipeSpeed);
-            pipeNorthObj2.setSpeed(currentPipeSpeed);
-            pipeSouthObj2.setSpeed(currentPipeSpeed);
-        }
+    private void setAllPipeSpeeds(int speed) {
+        pipeNorthObj.setSpeed(speed);
+        pipeSouthObj.setSpeed(speed);
+        pipeNorthObj2.setSpeed(speed);
+        pipeSouthObj2.setSpeed(speed);
+        plantObj.setSpeed(speed);
     }
 
     public boolean hitFloor() {
@@ -284,40 +295,68 @@ public class HardLevel extends AppCompatActivity {
     }
 
     public boolean checkForCollisions() {
-        Rect birdRect = new Rect();
-        birdImage.getHitRect(birdRect);
+        Rect birdRect = new Rect(); birdImage.getHitRect(birdRect);
+        Rect northRect = new Rect();
 
-        Rect pipeNorthRect = new Rect();
-        pipeNorthImage.getHitRect(pipeNorthRect);
-        pipeNorthRect.inset(140, 30);
-        Rect pipeSouthRect = new Rect();
-        pipeSouthImage.getHitRect(pipeSouthRect);
-        pipeSouthRect.inset(140, 30);
-        Rect pipeNorthRect2 = new Rect();
-        pipeNorthTwo.getHitRect(pipeNorthRect2);
-        pipeNorthRect2.inset(140, 30);
-        Rect pipeSouthRect2 = new Rect();
-        pipeSouthTwo.getHitRect(pipeSouthRect2);
-        pipeSouthRect2.inset(140, 30);
+        pipeNorthImage.getHitRect(northRect);
+        northRect.inset(140,30);
 
-        return Rect.intersects(birdRect, pipeNorthRect) ||
-                Rect.intersects(birdRect, pipeSouthRect) ||
-                Rect.intersects(birdRect, pipeNorthRect2) ||
-                Rect.intersects(birdRect, pipeSouthRect2);
+        Rect SouthRect = new Rect();
+        pipeSouthImage.getHitRect(SouthRect);
+        SouthRect.inset(140,30);
+
+        Rect northRect2 = new Rect();
+        pipeNorthTwo.getHitRect(northRect2);
+        northRect2.inset(140,30);
+
+        Rect SouthRect2 = new Rect();
+        pipeSouthTwo.getHitRect(SouthRect2);
+        SouthRect2.inset(140,30);
+
+        return Rect.intersects(birdRect,northRect)
+                || Rect.intersects(birdRect,SouthRect)
+                || Rect.intersects(birdRect,northRect2)
+                || Rect.intersects(birdRect,SouthRect2);
     }
 
-    private void saveBestScore(int bestScoreVal) {
+    public boolean checkForCollisionsPlant() {
+        Rect birdRect  = new Rect(); birdImage.getHitRect(birdRect);
+        Rect plantRect = new Rect(); plantGIF.getHitRect(plantRect);
+        return Rect.intersects(birdRect, plantRect);
+    }
+
+    private void GameOver() {
+        hideAllPipes();
+        plantGIF.setVisibility(View.INVISIBLE);
+        birdImage.setVisibility(View.INVISIBLE);
+
+        showResults();
+        currentScore.setText(String.valueOf(score));
+
+        int savedBest = loadBestScore();
+        if (score > savedBest) {
+            saveBestScore(score);
+            savedBest = score;
+        }
+        bestScore.setText(String.valueOf(savedBest));
+    }
+
+    public void restart() {
+        finish();
+        overridePendingTransition(0,0);
+        startActivity(getIntent());
+        overridePendingTransition(0,0);
+    }
+
+    private void saveBestScore(int val) {
         try {
             JSONObject json = new JSONObject();
-            json.put(best_score_key, bestScoreVal);
+            json.put(best_score_key, val);
             try (FileOutputStream fos = openFileOutput(best_score_file, MODE_PRIVATE)) {
                 fos.write(json.toString().getBytes());
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        } catch (Exception e) { e.printStackTrace(); }
     }
-
 
     private int loadBestScore() {
         try (FileInputStream fis = openFileInput(best_score_file)) {
@@ -325,90 +364,41 @@ public class HardLevel extends AppCompatActivity {
             fis.read(data);
             JSONObject json = new JSONObject(new String(data));
             return json.optInt(best_score_key, 0);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return 0;
+        } catch (Exception e) { e.printStackTrace(); return 0; }
+    }
+
+    public void playSFX(MediaPlayer sfx) {
+        if (sfx.isPlaying()) {
+            sfx.seekTo(0);
+            sfx.start();
+        } else if (!isMuted) {
+            sfx.start();
         }
     }
 
-    private void updateOdometer(){
-        int currentDistance = loadOdometer();
-        currentDistance += score;
-        saveOdometer(currentDistance);
-
-    }
-
-    private int loadOdometer(){
-        try (FileInputStream fis = openFileInput(odometer_file)) {
-            byte[] data = new byte[fis.available()];
-            fis.read(data);
-            JSONObject json = new JSONObject(new String(data));
-            return json.optInt(odometer_key, 0);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return 0;
-        }
-    }
-
-    private void saveOdometer(int distance) {
-        try {
-            JSONObject json = new JSONObject();
-            json.put(odometer_key, distance);
-            try (FileOutputStream fos = openFileOutput(odometer_file, MODE_PRIVATE)) {
-                fos.write(json.toString().getBytes());
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void GameOver() {
-        // Hide game elements
+    private void hideAllPipes() {
         pipeNorthImage.setVisibility(View.INVISIBLE);
         pipeSouthImage.setVisibility(View.INVISIBLE);
         pipeNorthTwo.setVisibility(View.INVISIBLE);
         pipeSouthTwo.setVisibility(View.INVISIBLE);
-        birdImage.setVisibility(View.INVISIBLE);
+        plantGIF.setVisibility(View.INVISIBLE);
+    }
 
+    private void hideResults() {
+        gameOver.setVisibility(View.INVISIBLE);
+        scoreBoard.setVisibility(View.INVISIBLE);
+        bestScore.setVisibility(View.INVISIBLE);
+        currentScore.setVisibility(View.INVISIBLE);
+        playAgain.setVisibility(View.INVISIBLE);
+        backButton.setVisibility(View.INVISIBLE);
+    }
+
+    private void showResults() {
         gameOver.setVisibility(View.VISIBLE);
         scoreBoard.setVisibility(View.VISIBLE);
         bestScore.setVisibility(View.VISIBLE);
         currentScore.setVisibility(View.VISIBLE);
         playAgain.setVisibility(View.VISIBLE);
         backButton.setVisibility(View.VISIBLE);
-
-        currentScore.setText("" + score);
-
-        int savedBestScore = loadBestScore();
-        if (score > savedBestScore) {
-            savedBestScore = score;
-            saveBestScore(savedBestScore);
-        }
-        updateOdometer();
-        bestScore.setText("" + savedBestScore);
-    }
-    public void restart() {
-        finish();
-        overridePendingTransition(0, 0);
-        startActivity(getIntent());
-        overridePendingTransition(0, 0);
-    }
-    public void playSFX(MediaPlayer sfx) {
-        if (!sfxOn) return;               // respect the toggle
-        if (sfx.isPlaying()) {
-            sfx.seekTo(0);
-        }
-        sfx.start();
-    }
-
-    protected void onResume() {
-        super.onResume();
-        isMusicMuted = preferences.getBoolean("isMusicMuted", false);
-        sfxOn = preferences.getBoolean("game_sound", true);
-
-        if (bgPlayer != null) {
-            if (!isMusicMuted && !bgPlayer.isPlaying()) bgPlayer.start();
-            else if (isMusicMuted && bgPlayer.isPlaying()) bgPlayer.pause();
-        }
     }
 }

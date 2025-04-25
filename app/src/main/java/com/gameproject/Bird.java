@@ -3,39 +3,33 @@ package com.gameproject;
 import android.widget.ImageView;
 
 public class Bird {
-    public int birdHeight;
-    public int birdWidth;
+
+    public final int minY = 0;
+
     public int birdX;
     public int birdY;
     public int velocityY;
     public boolean isDead;
-    public final int minY = 0; //top of the screen
-    private ImageView birdImage;
+
+    private final ImageView birdImage;
 
     public Bird(ImageView birdImage) {
-        this.birdX = 100;
-        this.birdY = 130;
-        this.velocityY = 0;
-        this.isDead = false;
         this.birdImage = birdImage;
+        this.birdX     = 100;
+        this.birdY     = 130;
+        this.velocityY = 0;
+        this.isDead    = false;
     }
-
-    // Update bird position
     public void update() {
-        velocityY += 2;  // Gravity effect
+        velocityY += 2;
         birdY += velocityY;
-        if (birdY < minY){
-            birdY = minY;
-        }
+        if (birdY < minY) birdY = minY;
         birdImage.setY(birdY);
     }
-
-    public void setSkin(int skinResID){
-        this.birdImage.setImageResource(skinResID);
+    public void setSkin(int skinResID) {
+        birdImage.setImageResource(skinResID);
     }
-
-    // bird jump
     public void jump() {
-        velocityY = -20;  // Apply jump force
+        velocityY = -20;
     }
 }
